@@ -2,7 +2,7 @@
 <html lang="en" class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 	<meta charset="UTF-8">
-	<title>仲裁投票</title>
+	<title>我要考试</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
 	<link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
@@ -16,24 +16,27 @@
 				<h1 class="logo pull-left">
 					<a href="index.html">
 						<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
-					</a><i style="color: white">仲裁员个人中心</i>
+					</a><i style="color: white">学生考试系统</i>
 				</h1>
-				<div class="blog-nav pull-right">
-					<ul class="layui-nav pull-left" id="menuUl">
-						<li class='layui-nav-item'><a href='javascript:;'>
-							<i class='layui-icon layui-icon-username' style='font-size: 15px'>我的</i></a>
-							<dl class='layui-nav-child'>
-								<dd><a onclick="xadmin.open('个人资料','/api-front/arbitration/myDetails');">个人资料</a></dd>
-								<dd><a onclick="xadmin.open('修改密码页面','/api-front/employer/myPass');">修改密码</a></dd>
-								<dd><a href='/frontLogout'>注销登录</a></dd>
-							</dl>
-						</li>
-					</ul>
+				<ul class="layui-nav pull-left" id="menuUl">
 
-					<a href="/api-front/getPage?pageName=index#" class="personal pull-left">
-						<i style="font-size: 15px">返回首页>>></i>
-					</a>
-				</div>
+					<li class='layui-nav-item' th:if="${session.student!=null &amp;&amp; session.student!=''}">
+							<a href='javascript:;'>
+								<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
+							<dl class='layui-nav-child'>
+							<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
+							<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
+							<dd><a href='/frontLogout'>注销登录</a></dd>
+							</dl>
+					</li>
+					<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
+						<a href='/frontLogout'>请登录！</a></dd>
+					</li>
+
+
+					<li class='layui-nav-item'><a href='#'>我要考试</a></li>
+					<li class='layui-nav-item'><a href='#'>查看成绩</a></li>
+				</ul>
 			</div>
 		</div>
 		<div class="container-wrap">
@@ -78,38 +81,30 @@
 		layui.config({
 		  base: '/layuires/static/js/'
 		}).use('blog');	
-		
+		layui.use('layer',function () {
+			var layer=layui.layer;
+		})
 	</script>
 </body>
 
 <script>
 	$(function () {
 		$.ajax({
-			type:'GET'
-			,url:'/api-front/arbitration/getRid'
-			,data:{}
-			,success:function (res) {
-				rid=res.uid;
-				$.ajax({
-					type:'GET'
-					,url:'/api-back/permission/menu'
-					,data:{"userId":rid}
-					,success:function (res) {
-						var menu=res.data;
-						for (var i=0;i<menu.length;i++){
-							if (menu[i].name === "仲裁投票") {
-								$('#menuUl').append("<li class='layui-nav-item layui-this'><a href='#'>" + menu[i].name + "</a></li>");
-							} else {
-								$('#menuUl').append("<li class='layui-nav-item'><a href='" + menu[i].href + "'>" + menu[i].name + "</a></li>");
-							}
-						}
-					}
-
-				})
+			type: 'GET'
+			, url: '/studentexam/getSid'
+			, data: {}
+			, success: function (res) {
+				if (res==='error') {
+					layer.alert('考生当前未登录，请先进行登录',{icon:5});
+					window.location.href='#';
+				}
 			}
-
+			, error:function () {
+				layer.msg('连接服务器超时，请及时通知老师管理员',{icon:6})
+			}
 		});
 	});
+
 
 	layui.use('laydate', function () {
 		var laydate = layui.laydate;
@@ -134,8 +129,8 @@
 			layer=layui.layer,
 			form = layui.form;
 		table.render({
-			elem: '#voteTable'
-			, url: '/api-front/arbitration/voteTable' //数据接口
+			elem: '#scoreTable'
+			, url: '/studentscore/scoreTable' //数据接口
 			, page: true //开启分页
 			, cellMinWidth: 80 //全局定义常规单元格的最小宽度
 			, limits:[10,20]
