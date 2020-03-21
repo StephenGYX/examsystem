@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+	<meta charset="UTF-8">
+	<title>仲裁处理</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+	<link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
+	<script th:src="@{/layuires/layui/layui.js}"></script>
+	<script th:src="@{/layuires/static/js/}"></script>
+	<header th:replace="header::html"></header>
+</head>
+<body class="lay-blog">
+		<div class="header">
+			<div class="header-wrap">
+				<h1 class="logo pull-left">
+					<a href="index.html">
+						<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
+					</a><i style="color: white">仲裁员个人中心</i>
+				</h1>
+				<div class="blog-nav pull-right">
+					<ul class="layui-nav pull-left" id="menuUl">
+						<li class='layui-nav-item'><a href='javascript:;'>
+							<i class='layui-icon layui-icon-username' style='font-size: 15px'>我的</i></a>
+							<dl class='layui-nav-child'>
+								<dd><a onclick="xadmin.open('个人资料','/api-front/arbitration/myDetails');">个人资料</a></dd>
+								<dd><a onclick="xadmin.open('修改密码页面','/api-front/employer/myPass');">修改密码</a></dd>
+								<dd><a href='/frontLogout'>注销登录</a></dd>
+							</dl>
+						</li>
+					</ul>
+
+					<a href="/api-front/getPage?pageName=index#" class="personal pull-left">
+						<i style="font-size: 15px">返回首页>>></i>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="container-wrap">
+			<div class="container">
+				<div class="contar-wrap" style="width: 1000px;margin-left: -15%;">
+					<div class="item" style="width: 1000px">
+						<div class="item-box  layer-photos-demo1 layer-photos-demo">
+							<div class="layui-card-body ">
+								<form class="layui-form  layui-col-space5">
+									<div class="layui-inline">
+										<div class="layui-input-inline">
+											<input type="text" class="layui-input" id="startDate" placeholder="请选择开始日期"
+												   name="startDate">
+										</div>
+									</div>
+									<div class="layui-inline">
+										<div class="layui-input-inline">
+											<input type="text" class="layui-input" id="endDate" placeholder="请选择结束日期" name="endDate">
+										</div>
+									</div>
+									<div class="layui-inline">
+										<div class="layui-input-inline">
+											<select name="arbitrationType" id="arbitrationType" class="layui-select">
+												<option value="" selected="selected">--仲裁状态--</option>
+												<option value="6">仲裁中</option>
+												<option value="7">已曝光</option>
+												<option value="11">审核中</option>
+											</select>
+										</div>
+									</div>
+									<div class="layui-inline layui-show-xs-block">
+										<button class="layui-btn" lay-submit="" lay-filter="search"><i
+												class="layui-icon">&#xe615;</i></button>
+									</div>
+								</form>
+							</div>
+							<div class="layui-card-body ">
+								<table class="layui-hide" id="arbitrationTable" lay-filter="arbitrationTable" ></table>
+							</div>
+							<script type="text/html" id="barDemo">
+								<a class="layui-btn layui-btn-xs" lay-event="details">详情</a>
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<script>
+		layui.config({
+		  base: '/layuires/static/js/'
+		}).use('blog');	
+		
+	</script>
+</body>
+
+<script>
+	$(function () {
+		$.ajax({
+			type:'GET'
+			,url:'/api-front/arbitration/getRid'
+			,data:{}
+			,success:function (res) {
+				rid=res.uid;
+				$.ajax({
+					type:'GET'
+					,url:'/api-back/permission/menu'
+					,data:{"userId":rid}
+					,success:function (res) {
+						var menu=res.data;
+						for (var i=0;i<menu.length;i++){
+							if (menu[i].name === "仲裁处理") {
+								$('#menuUl').append("<li class='layui-nav-item layui-this'><a href='#'>" + menu[i].name + "</a></li>");
+							} else {
+								$('#menuUl').append("<li class='layui-nav-item'><a href='" + menu[i].href + "'>" + menu[i].name + "</a></li>");
+							}
+						}
+					}
+
+				})
+			}
+
+		});
+	});
+
+	layui.use('laydate', function () {
+		var laydate = layui.laydate;
+		//选中后的回调
+		laydate.render({
+			elem: '#startDate'
+			, done: function (value, date) {
+				// layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+			}
+		});
+
+		laydate.render({
+			elem: '#endDate'
+			, done: function (value, date) {
+				// layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+			}
+		});
+	});
+
+	layui.use(['table','form','layer'], function () {
+		var table = layui.table,
+			layer=layui.layer,
+			form = layui.form;
+		table.render({
+			elem: '#arbitrationTable'
+			, url: '/api-front/arbitration/arbitrationTable' //数据接口
+			, page: true //开启分页
+			, cellMinWidth: 80 //全局定义常规单元格的最小宽度
+			, limits:[10,20]
+			, limit:10
+			, response: {
+				dataName: 'datas' //规定数据列表的字段名称，默认：data
+			}
+			, cols: [
+				[
+					{type:'numbers' ,align:'center',title:'序号'}
+					,{field:'oid', align:'center',title: '订单表id',style:'display:none;'}
+					,{field:'aid', align:'center',title: '仲裁id',width:'8%'}
+					,{field:'cause', title: '仲裁原因',width: '25%',align:'center'}
+					,{field:'employwin',align:'center',width: '12%',title: '雇主胜票数'}
+					,{field:'servicewin', align:'center',width: '13%', title: '服务商胜票数'}
+					,{field:'winer', align:'center',width: '13%', title: '获胜者'}
+					,{field:'pid', align:'center', title: '状态',width: '10%', templet: function (msg) {
+						if (msg.pid === '6')
+							return "仲裁中"
+						else if (msg.pid === '7')
+							return "已曝光"
+						else if (msg.pid==='11')
+							return "审核中"
+						else
+							return "已完成"
+					}}
+					,{ fixed: 'right', title: '操作',  align: 'center',width: 100, toolbar: '#barDemo'}
+				]
+			],
+			done: function () {
+				//checkPermission();
+			}
+
+		});
+		$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
+		//监听行工具事件
+		table.on('tool(arbitrationTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+			var data = obj.data ,//获得当前行数据
+					layEvent = obj.event, //获得 lay-event 对应的值
+					oid=data.oid,
+					cause=data.cause;
+			if (layEvent === 'details') {
+				$.ajax({
+					url:'/api-front/arbitration/details',
+					type:"post",
+					data:{"oid":oid},
+					success:function (msg) {
+						layer.open({
+							type: 1 //Page层类型
+							,area: ['600px', '500px']
+							,title: '查看订单详情'
+							,shade: 0.3 //遮罩透明度
+							,anim: 1 //0-6的动画形式，-1不开启
+							,content:
+									'<div style="padding:50px;font-size: 15px"><div><p>雇主名称：'+msg.uname+'&nbsp;(ID:'+msg.nuseraccount+')</p></div><br><div><p>订单标题：'+msg.ntitle+'</p></div><br><div><p>订单内容：'+msg.ncontent+'</p></div><br><div><p>订单要求：'+msg.ndemand+'</p></div><br><div><p>订单金额：'+msg.nmoney+'(CNY)</p></div><br><div><p>时间：'+msg.ostarttime+'-至-'+msg.oendtime+'</p></div><br><div><p style="color: red">申请原因：'+cause+'</p></div></div>'
+						});
+					},
+					error:function (msg) {
+						layer.open({
+							type:2,
+							content: "/404.html",
+							area:['1000px','600px'],
+							title:'权限不允许进行访问'
+						})
+					}
+				})
+			}
+		});
+
+		//搜索
+		form.on('submit(search)', function (data) {
+			var field = data.field;
+			if (dateCompare(field.startDate, field.endDate)) {
+				table.render({
+					elem: '#arbitrationTable'
+					, url: '/api-front/arbitration/arbitrationTable' //数据接口
+					, page: true //开启分页
+					, limits:[10,20]
+					, limit:10
+					, where: {
+						"starttime": field.startDate,
+						"endtime": field.endDate,
+						"arbitrationType":field.arbitrationType
+					}
+					, response: {
+						dataName: 'datas' //规定数据列表的字段名称，默认：data
+					}
+					, cols: [
+						[
+							{type:'numbers' ,align:'center',title:'序号'}
+							,{field:'oid', align:'center',title: '订单表id',style:'display:none;'}
+							,{field:'aid', align:'center',title: '仲裁id',width:'8%'}
+							,{field:'cause', title: '仲裁原因',width: '25%',align:'center'}
+							,{field:'employwin',align:'center',width: '12%',title: '雇主胜票数'}
+							,{field:'servicewin', align:'center',width: '13%', title: '服务商胜票数'}
+							,{field:'winer', align:'center',width: '13%', title: '获胜者'}
+							,{field:'pid', align:'center', title: '状态',width: '10%', templet: function (msg) {
+								if (msg.pid === '6')
+									return "仲裁中"
+								else if (msg.pid === '7')
+									return "已曝光"
+								else if (msg.pid==='11')
+									return "审核中"
+								else
+									return "已完成"
+							}}
+							,{ fixed: 'right', title: '操作',  align: 'center',width: 100, toolbar: '#barDemo'}
+						]
+					]
+				});
+				$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
+			} else {
+				layer.msg("您的日期不正确，请重新输入！",{icon:2});
+			}
+			return false;
+		});
+		//checkPermission();
+	});
+
+	function dateCompare(startDate, endDate) {
+		var oDate1 = new Date(startDate);
+		var oDate2 = new Date(endDate);
+		if (oDate1 > oDate2) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+
+</script>
+
+</html>
