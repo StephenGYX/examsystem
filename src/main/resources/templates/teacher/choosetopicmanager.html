@@ -7,7 +7,8 @@
     <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
     <script th:src="@{/layuires/layui/layui.js}"></script>
-    <script th:src="@{/layuires/static/js/}"></script>
+    <script th:src="@{/layuires/static/js/blog.js}"></script>
+    <script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body>
 <div class="layui-fluid">
@@ -16,11 +17,6 @@
             <div class="layui-card">
                 <div class="layui-card-body ">
                     <form class="layui-form  layui-col-space5">
-                        <div class="layui-inline layui-show-xs-block">
-                            <input type="text" name="ntitle" placeholder="请输入题目关键字" autocomplete="off"
-                                   class="layui-input">
-                        </div>
-
                         <div class="layui-input-inline">
                             <select name="verifyState" lay-filter="verifyState">
                                 <option value="">请选择科目</option>
@@ -30,24 +26,30 @@
                             </select>
                         </div>
 
-
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="test20" placeholder="请选择开始日期"
-                                       name="startDate">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="test21" placeholder="请选择结束日期"
-                                       name="endDate">
-                            </div>
-                        </div>
-
-
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn" lay-submit="" lay-filter="search"><i
                                     class="layui-icon">&#xe615;</i></button>
+                        </div>
+
+                        <div class="layui-inline layui-show-xs-block">
+                            <button type="button" class="layui-btn layui-btn-fluid" onclick="add()">新增选择题
+                            </button>
+                        </div>
+
+                        <div class="layui-inline layui-show-xs-block">
+                            <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>批量导入题库
+                            </button>
+                        </div>
+
+                        <div class="layui-inline layui-show-xs-block">
+                            <button type="button" class="layui-btn layui-btn-fluid" onclick="addMention()">题库模板导入提示
+                            </button>
+                        </div>
+
+                        <div class="layui-inline layui-show-xs-block">
+                            <button type="button" class="layui-btn layui-btn-fluid" lay-event="dowload"
+                                    onclick="download()">获取选择题题库模板
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -57,6 +59,7 @@
 
                 <div class="layui-card-body ">
                     <script type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn layui-btn-xs" lay-event="update">修改</a>
                         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
                     </script>
                 </div>
@@ -66,32 +69,222 @@
 </div>
 </body>
 
+<script type="text/html" id="ruleFrame">
+    <div style="padding:50px;font-size: 15px">
+        <div>选择题题目：<i id="tt" style="color: red;font-size: 12px"></i><textarea name="titles" id="titles" cols="50"
+                                                                               rows="1"
+                                                                               style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项A：<i id="tt2" style="color: red;font-size: 12px"></i><textarea name="titles" id="titles2" cols="50"
+                                                                              rows="1"
+                                                                              style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项B：<i id="tt3" style="color: red;font-size: 12px"></i><textarea name="titles" id="titles3" cols="50"
+                                                                              rows="1"
+                                                                              style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项C：<i id="tt4" style="color: red;font-size: 12px"></i><textarea name="titles" id="titles4" cols="50"
+                                                                              rows="1"
+                                                                              style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项D：<i id="tt5" style="color: red;font-size: 12px"></i><textarea name="titles" id="titles5" cols="50"
+                                                                              rows="1"
+                                                                              style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>正确选项（输入字母）：<i id="tt6" style="color: red;font-size: 12px"></i><textarea name="titles" id="titles6"
+                                                                                     cols="50"
+                                                                                     rows="1"
+                                                                                     style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea>
+        </div>
+        <br>
+        <div class="layui-input-inline">
+            <select id="sid" lay-filter="verifyState">
+                <option value="">请选择科目</option>
+                <option value="1">JAVA</option>
+                <option value="2">C++</option>
+                <option value="3">PYTHON</option>
+            </select>
+        </div>
+        <br><br><br>
+        <div style="float: right">
+            <button class="layui-btn layui-btn-xs layui-btn-radius" onclick="addrule()">确定新增</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="rule2Frame">
+    <div style="padding:50px;font-size: 15px">
+        <div>
+            <h1>选择题模板导入注意-Warning</h1>
+            <h3>请先下载预先设定好的模板，然后按格式导入模板，切勿随机修改模板，将会导致导入失败或导入错误的模板导致题库出现问题！</h3>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="ruleFrame2">
+    <div style="padding:50px;font-size: 15px">
+        <input type="hidden" id="updateId">
+        <div>选择题题目：<i id="ttt" style="color: red;font-size: 12px"></i><textarea name="titles" id="ttitles" cols="50"
+                                                                                rows="1"
+                                                                                style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项A：<i id="ttt2" style="color: red;font-size: 12px"></i><textarea name="titles" id="ttitles2" cols="50"
+                                                                               rows="1"
+                                                                               style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项B：<i id="ttt3" style="color: red;font-size: 12px"></i><textarea name="titles" id="ttitles3" cols="50"
+                                                                               rows="1"
+                                                                               style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项C：<i id="ttt4" style="color: red;font-size: 12px"></i><textarea name="titles" id="ttitles4" cols="50"
+                                                                               rows="1"
+                                                                               style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>选项D：<i id="ttt5" style="color: red;font-size: 12px"></i><textarea name="titles" id="ttitles5" cols="50"
+                                                                               rows="1"
+                                                                               style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea></div>
+        <br>
+        <div>正确选项（输入字母）：<i id="ttt6" style="color: red;font-size: 12px"></i><textarea name="titles" id="ttitles6"
+                                                                                      cols="50"
+                                                                                      rows="1"
+                                                                                      style="resize: none;font-size: 20px;border-radius: 5px"
+        ></textarea>
+        </div>
+        <br>
+        <div class="layui-input-inline">
+            <select id="ssid" lay-filter="verifyState">
+                <option value="">请选择科目</option>
+                <option value="1">JAVA</option>
+                <option value="2">C++</option>
+                <option value="3">PYTHON</option>
+            </select>
+        </div>
+        <br><br><br>
+        <div style="float: right">
+            <button class="layui-btn layui-btn-xs layui-btn-radius" onclick="updaterule()">确定修改</button>
+        </div>
+    </div>
+</script>
+
+
 <script>
-	layui.use('laydate', function () {
-		var laydate = layui.laydate;
-		//选中后的回调
-		laydate.render({
-			elem: '#test20'
-			, done: function (value, date) {
-			}
-		});
+	var opAdd;
 
-		laydate.render({
-			elem: '#test21'
-			, done: function (value, date) {
-			}
+	function add() {
+		opAdd = layer.open({
+			type: 1 //Page层类型
+			, area: ['800px', '600px']
+			, title: '新增填空题窗口'
+			, shade: 0.3 //遮罩透明度
+			, anim: 1 //0-6的动画形式，-1不开启
+			, content: $("#ruleFrame").html()
 		});
-	});
+	}
 
-	function dateCompare(startDate, endDate) {
-		var oDate1 = new Date(startDate);
-		var oDate2 = new Date(endDate);
-		if (oDate1 > oDate2) {
-			console.log('第一个大');
-			return false;
+
+	function download() {
+		window.location.href = "/topic/downloadChoose";
+	}
+
+	function addMention() {
+		opAdd = layer.open({
+			type: 1 //Page层类型
+			, area: ['600px', '300px']
+			, title: '新增填空题窗口'
+			, shade: 0.3 //遮罩透明度
+			, anim: 1 //0-6的动画形式，-1不开启
+			, content: $("#rule2Frame").html()
+		});
+	}
+
+	function updaterule() {
+		var title = $("#ttitles").val();
+		var option1 = $("#ttitles2").val();
+		var option2 = $("#ttitles3").val();
+		var option3 = $("#ttitles4").val();
+		var option4 = $("#ttitles5").val();
+		var correct = $("#ttitles6").val();
+		var qid = $("#updateId").val();
+		var sid = $("#ssid option:selected").val();
+		if (title.trim() == null || title.trim() === "" || option1.trim() == null || option1.trim() === "" || option2.trim() == null || option2.trim() === "" || option3.trim() == null || option3.trim() === "" || option4.trim() == null || option4.trim() === "" || correct.trim() == null || correct.trim() === "") {
+			layer.msg("请输入完整的信息！", {icon: 2});
+		} else if (sid == null || sid === "") {
+			layer.msg("请选择正确的科目类型", {icon: 2});
 		} else {
-			console.log('第二个大');
-			return true;
+			$.ajax({
+				type: "post",
+				url: '/topic/topicUpdate',
+				data: {
+					"title": title,
+					"option1": option1,
+					"option2": option2,
+					"option3": option3,
+					"option4": option4,
+					"correct": correct,
+					"sid": sid,
+					"qid": qid
+				},
+				success: function (msg) {
+					if (msg === "success") {
+						$(".layui-laypage-btn")[0].click();
+						layer.close(opAdd);
+						layer.alert("修改成功", {icon: 1});
+					} else {
+						layer.alert("修改失败", {icon: 2});
+					}
+				}
+			})
+		}
+	}
+
+	function addrule() {
+		var title = $("#titles").val();
+		var option1 = $("#titles2").val();
+		var option2 = $("#titles3").val();
+		var option3 = $("#titles4").val();
+		var option4 = $("#titles5").val();
+		var correct = $("#titles6").val();
+		var sid = $("#sid option:selected").val();
+		if (title.trim() == null || title.trim() === "" || option1.trim() == null || option1.trim() === "" || option2.trim() == null || option2.trim() === "" || option3.trim() == null || option3.trim() === "" || option4.trim() == null || option4.trim() === "" || correct.trim() == null || correct.trim() === "") {
+			layer.msg("请输入完整的信息！", {icon: 2});
+		} else if (sid == null || sid === "") {
+			layer.msg("请选择正确的科目类型", {icon: 2});
+		} else {
+			$.ajax({
+				type: "post",
+				url: '/topic/chooseAdd',
+				data: {
+					"title": title,
+					"option1": option1,
+					"option2": option2,
+					"option3": option3,
+					"option4": option4,
+					"correct": correct,
+					"sid": sid
+				},
+				success: function (msg) {
+					if (msg === "success") {
+
+						$(".layui-laypage-btn")[0].click();
+						layer.close(opAdd);
+						layer.alert("添加成功", {icon: 1});
+					} else {
+						layer.msg("已有相同标题的题目，请重新输入", {icon: 2});
+						document.getElementById("tt").innerText = "已有相同标题的题目，请重新输入"
+					}
+				}
+			})
 		}
 	}
 
@@ -121,10 +314,7 @@
 					, {field: 'qtime', title: '生成时间', align: 'center'}
 					, {title: '操作', toolbar: '#barDemo', align: 'center'}
 				]
-			],
-			done: function () {
-
-			}
+			]
 		});
 
 
@@ -151,54 +341,80 @@
 						layer.msg('只有未过审的需求才可以删除，请确认！', {icon: 2});
 					}
 				});
-			} else if (obj.event === 'verify') {
-				if (data.nstatus == '待审核') {
-					xadmin.open('审核需求页面', '/api-back/need/verify/?nid=' + data.nid);
-				} else {
-					layer.msg('只有待审核的需求才可以进行审核，请确认！', {icon: 2});
-				}
+			} else if (obj.event === 'update') {
+				opAdd = layer.open({
+					type: 1 //Page层类型
+					, area: ['800px', '600px']
+					, shade: 0.3 //遮罩透明度
+					, anim: 1 //0-6的动画形式，-1不开启
+					, content: $("#ruleFrame2").html()
+				});
+				$('#ttitles').val(data.title);
+				$('#ttitles2').val(data.option1);
+				$('#ttitles3').val(data.option2);
+				$('#ttitles4').val(data.option3);
+				$('#ttitles5').val(data.option4);
+				$('#ttitles6').val(data.correct);
+				$("#ssid").val(data.sid);
+				$("#updateId").val(data.qid);
 			}
 		});
 
 		//搜索
 		form.on('submit(search)', function (data) {
 			var data = data.field;
-			if (dateCompare(data.startDate, data.endDate)) {
-				table.render({
-					elem: '#need'
-					, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
-					, page: true //开启分页
-					, where: {
-						"ntitle": data.ntitle,
-						"verifyState": data.verifyState,
-						"tenderState": data.tenderState,
-						"startTime": data.startDate,
-						"endTime": data.endDate
-					}
-					, response: {
-						countName: 'count', //规定数据总数的字段名称，默认：count
-						dataName: 'datas' //规定数据列表的字段名称，默认：data
-					}
-					, cols: [
-						[ //表头
-							{type: 'checkbox', fixed: 'left'},
-							{title: '序号', type: 'numbers', width: '5%'}
-							, {field: 'sname', title: '科目', align: 'center'}
-							, {field: 'title', title: '题目名', align: 'center'}
-							, {field: 'option1', title: '选项一', align: 'center'}
-							, {field: 'option2', title: '选项二', align: 'center'}
-							, {field: 'option3', title: '选项三', align: 'center'}
-							, {field: 'option4', title: '选项四', align: 'center'}
-							, {field: 'correct', title: '正确选项', align: 'center'}
-							, {field: 'qtime', title: '生成时间', align: 'center'}
-							, {title: '操作', toolbar: '#barDemo', align: 'center'}
-						]
+			table.render({
+				elem: '#need'
+				, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
+				, page: true //开启分页
+				, where: {
+					"ntitle": data.ntitle,
+					"verifyState": data.verifyState,
+					"tenderState": data.tenderState,
+					"startTime": data.startDate,
+					"endTime": data.endDate
+				}
+				, response: {
+					countName: 'count', //规定数据总数的字段名称，默认：count
+					dataName: 'datas' //规定数据列表的字段名称，默认：data
+				}
+				, cols: [
+					[ //表头
+						{type: 'checkbox', fixed: 'left'},
+						{title: '序号', type: 'numbers'}
+						, {field: 'sname', title: '科目', align: 'center'}
+						, {field: 'title', title: '题目名', align: 'center'}
+						, {field: 'qtime', title: '生成时间', align: 'center'}
+						, {title: '操作', toolbar: '#barDemo', align: 'center'}
 					]
-				});
-			} else {
-				layer.msg("请输入正确的日期范围！");
-			}
+				]
+			});
 			return false;
+		});
+	});
+
+
+</script>
+
+<script>
+	layui.use('upload', function () {
+		var $ = layui.jquery
+			, upload = layui.upload;
+		//指定允许上传的文件类型
+		upload.render({
+			elem: '#test3'
+			,
+			url: '/topic/bulkInsertChoose' //改成您自己的上传接口
+			,
+			accept: 'file' //普通文件
+			,
+			acceptMime: '.xls'//文件窗口默认显示 xlsx|xls|xlsm 的文件
+			,
+			exts: 'xls' //限制后缀名
+			,
+			done: function (res) {
+				layer.alert(res.msg);
+			}
 		});
 	});
 </script>

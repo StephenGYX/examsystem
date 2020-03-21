@@ -9,4 +9,22 @@
             )
         </foreach>
     </insert>
+
+    <insert id="chooseAddMany" parameterType="com.example.examsystem.bean.Question">
+        insert into question (sid,qtype,title,qtime,option1,option2,option3,option4,correct) values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.sid},#{item.qtype},#{item.title},curdate(),#{item.option1},#{item.option2},#{item.option3},#{item.option4},#{item.correct}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="judgeAddMany" parameterType="com.example.examsystem.bean.Question">
+        insert into question (sid,qtype,title,qtime,correct) values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.sid},#{item.qtype},#{item.title},curdate(),#{item.correct}
+            )
+        </foreach>
+    </insert>
 </mapper>

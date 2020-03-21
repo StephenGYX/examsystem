@@ -9,7 +9,6 @@
     <script th:src="@{/layuires/layui/layui.js}"></script>
     <script th:src="@{/layuires/static/js/blog.js}"></script>
     <script th:src="@{/js/jquery-3.4.1.js}"></script>
-
 </head>
 <body>
 <div class="layui-fluid">
@@ -128,29 +127,12 @@
 		opAdd = layer.open({
 			type: 1 //Page层类型
 			, area: ['600px', '300px']
-			, title: '新增填空题窗口'
+			, title: '新增填空题提醒'
 			, shade: 0.3 //遮罩透明度
 			, anim: 1 //0-6的动画形式，-1不开启
 			, content: $("#rule2Frame").html()
 		});
 	}
-
-
-	layui.use('laydate', function () {
-		var laydate = layui.laydate;
-		//选中后的回调
-		laydate.render({
-			elem: '#test20'
-			, done: function (value, date) {
-			}
-		});
-
-		laydate.render({
-			elem: '#test21'
-			, done: function (value, date) {
-			}
-		});
-	});
 
 
 	function rcverify(msg) {
@@ -214,12 +196,13 @@
 				data: {"titles": titles, "sid": sid},
 				success: function (msg) {
 					if (msg === "success") {
-						layer.msg("添加成功", {icon: 1});
+
 						$(".layui-laypage-btn")[0].click();
 						layer.close(opAdd);
+						layer.alert("添加成功", {icon: 1});
 					} else {
-						layer.msg("已有相同标题的规则，请重新输入", {icon: 2});
-						document.getElementById("tt").innerText = "已有相同标题的规则，请重新输入"
+						layer.msg("已有相同标题的题目，请重新输入", {icon: 2});
+						document.getElementById("tt").innerText = "已有相同标题的题目，请重新输入"
 					}
 				}
 			})
@@ -325,12 +308,12 @@
 			,
 			accept: 'file' //普通文件
 			,
-			acceptMime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-excel.sheet.macroEnabled.12'//文件窗口默认显示 xlsx|xls|xlsm 的文件
+			acceptMime: '.xls'//文件窗口默认显示 xlsx|xls|xlsm 的文件
 			,
-			exts: 'xlsx|xls|xlsm' //限制后缀名
+			exts: 'xls' //限制后缀名
 			,
 			done: function (res) {
-				alert(res.msg);
+				layer.alert(res.msg);
 			}
 		});
 	});

@@ -2,6 +2,7 @@ package com.example.examsystem.controller.teachercontroller;
 
 import com.example.examsystem.base.result.PageTableRequest;
 import com.example.examsystem.base.result.Results;
+import com.example.examsystem.bean.Question;
 import com.example.examsystem.dto.TopicDto;
 import com.example.examsystem.service.teacher.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,55 @@ public class TopicController
 	}
 
 	@ResponseBody
+	@RequestMapping("/chooseAdd")
+	public String chooseAdd(String title, String option1, String option2, String option3, String option4, String correct, String sid)
+	{
+		return topicService.chooseAdd(title, option1, option2, option3, option4, correct, sid);
+	}
+
+	@ResponseBody
 	@RequestMapping("/blankAdd")
 	public String blankAdd(String titles, String sid)
 	{
+
 		return topicService.blankAdd(titles, sid);
+	}
+
+
+	@ResponseBody
+	@RequestMapping("/judgeAdd")
+	public String judgeAdd(String title, String sid, String correct)
+	{
+
+		return topicService.judgeAdd(title, sid, correct);
+	}
+
+	@ResponseBody
+	@RequestMapping("/shortAdd")
+	public String shortAdd(String title, String sid)
+	{
+
+		return topicService.shortAdd(title, sid);
+	}
+
+	@RequestMapping("/bulkInsertJudge")
+	@ResponseBody
+	public Map<String, Object> bulkInsertJudge(MultipartFile file)
+	{
+		System.out.println(file);
+		String str = "批量导入失败，请检查";
+		String code = "500";
+		boolean flag = topicService.bulkInsertJudge(file);
+		if (flag)
+		{
+			str = "批量导入成功";
+			code = "200";
+		}
+		Map map = new HashMap<String, Object>();
+		//返回json
+		map.put("msg", str);
+		map.put("code", code);
+		return map;
 	}
 
 	@RequestMapping("/bulkInsertBlank")
@@ -73,6 +119,46 @@ public class TopicController
 		String str = "批量导入失败，请检查";
 		String code = "500";
 		boolean flag = topicService.bulkInsertBlank(file);
+		if (flag)
+		{
+			str = "批量导入成功";
+			code = "200";
+		}
+		Map map = new HashMap<String, Object>();
+		//返回json
+		map.put("msg", str);
+		map.put("code", code);
+		return map;
+	}
+
+	@RequestMapping("/bulkInsertChoose")
+	@ResponseBody
+	public Map<String, Object> bulkInsertChoose(MultipartFile file)
+	{
+		System.out.println(file);
+		String str = "批量导入失败，请检查";
+		String code = "500";
+		boolean flag = topicService.bulkInsertChoose(file);
+		if (flag)
+		{
+			str = "批量导入成功";
+			code = "200";
+		}
+		Map map = new HashMap<String, Object>();
+		//返回json
+		map.put("msg", str);
+		map.put("code", code);
+		return map;
+	}
+
+	@RequestMapping("/bulkInsertShort")
+	@ResponseBody
+	public Map<String, Object> bulkInsertShort(MultipartFile file)
+	{
+		System.out.println(file);
+		String str = "批量导入失败，请检查";
+		String code = "500";
+		boolean flag = topicService.bulkInsertShort(file);
 		if (flag)
 		{
 			str = "批量导入成功";
@@ -145,6 +231,207 @@ public class TopicController
 			}
 		}
 		return null;
+	}
+
+	@GetMapping("/downloadJudge")
+	public Results downloadJudge(String wid, HttpServletResponse response, HttpServletRequest request, ModelAndView model) throws IOException
+	{
+		//设置下载文件的名字+类型
+		String filename = "判断题模板.xls";
+		//设置文件路径
+		File fileDirPath = new File("src/main/resources/static");
+		File file = new File(fileDirPath.getAbsolutePath() + "/excel/" + filename);
+		System.out.println(file.getAbsolutePath());
+		if (file.exists())
+		{
+			response.reset();
+			// 设置强制下载不打开
+			//response.setContentType("application/force-download");
+			//避免中文乱码
+			response.setHeader("Connection", "close");
+			//设置传输的类型
+			response.setHeader("Content-Type", "application/octet-stream");
+			response.setHeader("Content-Transfer-Encoding", "chunked");
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.setHeader("Content-Disposition", "attachment;fileName=" + new String(filename.getBytes("utf-8"), "ISO-8859-1"));
+			response.setContentType("application/OCTET-STREAM");
+			byte[] buffer = new byte[1024];
+			FileInputStream fis = null;
+			BufferedInputStream bis = null;
+			try
+			{
+				fis = new FileInputStream(file);
+				bis = new BufferedInputStream(fis);
+				OutputStream os = response.getOutputStream();
+				int i = bis.read(buffer);
+				while (i != -1)
+				{
+					os.write(buffer, 0, i);
+
+					i = bis.read(buffer);
+				}
+				bis.close();
+				return null;
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			} finally
+			{
+				if (bis != null)
+				{
+				}
+				if (fis != null)
+				{
+					try
+					{
+						fis.close();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@GetMapping("/downloadShort")
+	public Results downloadShort(String wid, HttpServletResponse response, HttpServletRequest request, ModelAndView model) throws IOException
+	{
+		//设置下载文件的名字+类型
+		String filename = "简答题模板.xls";
+		//设置文件路径
+		File fileDirPath = new File("src/main/resources/static");
+		File file = new File(fileDirPath.getAbsolutePath() + "/excel/" + filename);
+		System.out.println(file.getAbsolutePath());
+		if (file.exists())
+		{
+			response.reset();
+			// 设置强制下载不打开
+			//response.setContentType("application/force-download");
+			//避免中文乱码
+			response.setHeader("Connection", "close");
+			//设置传输的类型
+			response.setHeader("Content-Type", "application/octet-stream");
+			response.setHeader("Content-Transfer-Encoding", "chunked");
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.setHeader("Content-Disposition", "attachment;fileName=" + new String(filename.getBytes("utf-8"), "ISO-8859-1"));
+			response.setContentType("application/OCTET-STREAM");
+			byte[] buffer = new byte[1024];
+			FileInputStream fis = null;
+			BufferedInputStream bis = null;
+			try
+			{
+				fis = new FileInputStream(file);
+				bis = new BufferedInputStream(fis);
+				OutputStream os = response.getOutputStream();
+				int i = bis.read(buffer);
+				while (i != -1)
+				{
+					os.write(buffer, 0, i);
+
+					i = bis.read(buffer);
+				}
+				bis.close();
+				return null;
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			} finally
+			{
+				if (bis != null)
+				{
+				}
+				if (fis != null)
+				{
+					try
+					{
+						fis.close();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@GetMapping("/downloadChoose")
+	public Results downloadChoose(String wid, HttpServletResponse response, HttpServletRequest request, ModelAndView model) throws IOException
+	{
+		//设置下载文件的名字+类型
+		String filename = "选择题模板.xls";
+		//设置文件路径
+		File fileDirPath = new File("src/main/resources/static");
+		File file = new File(fileDirPath.getAbsolutePath() + "/excel/" + filename);
+		System.out.println(file.getAbsolutePath());
+		if (file.exists())
+		{
+			response.reset();
+			// 设置强制下载不打开
+			//response.setContentType("application/force-download");
+			//避免中文乱码
+			response.setHeader("Connection", "close");
+			//设置传输的类型
+			response.setHeader("Content-Type", "application/octet-stream");
+			response.setHeader("Content-Transfer-Encoding", "chunked");
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.setHeader("Content-Disposition", "attachment;fileName=" + new String(filename.getBytes("utf-8"), "ISO-8859-1"));
+			response.setContentType("application/OCTET-STREAM");
+			byte[] buffer = new byte[1024];
+			FileInputStream fis = null;
+			BufferedInputStream bis = null;
+			try
+			{
+				fis = new FileInputStream(file);
+				bis = new BufferedInputStream(fis);
+				OutputStream os = response.getOutputStream();
+				int i = bis.read(buffer);
+				while (i != -1)
+				{
+					os.write(buffer, 0, i);
+
+					i = bis.read(buffer);
+				}
+				bis.close();
+				return null;
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			} finally
+			{
+				if (bis != null)
+				{
+				}
+				if (fis != null)
+				{
+					try
+					{
+						fis.close();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@RequestMapping("/topicUpdate")
+	@ResponseBody
+	public String topicUpdate(Question question)
+	{
+		System.out.println(question.toString());
+		String msg = "error";
+		int index = topicService.topicUpdate(question);
+		System.out.println(index);
+		if (index > 0)
+		{
+			msg = "success";
+		}
+		return msg;
 	}
 
 

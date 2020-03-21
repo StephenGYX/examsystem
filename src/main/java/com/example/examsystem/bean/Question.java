@@ -1,6 +1,7 @@
 package com.example.examsystem.bean;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serializable;
 
@@ -17,4 +18,6 @@ public class Question implements Serializable
 	private String option4;
 	private String correct;
 	private String qtime;
+
+
 }
