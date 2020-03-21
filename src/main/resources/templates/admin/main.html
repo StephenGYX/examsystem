@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>考试系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
+    <script th:src="@{/layuires/layui/layui.js}"></script>
+    <script th:src="@{/layuires/static/js/}"></script>
+    <script th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" style="width: 350px;font-size: 28px">考试系统-管理端</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item" th:if="${null != session.admin &amp;&amp; '' != session.admin  }">
+                欢迎你：<span th:text="${session.admin.account}"/>
+            </li>
+            <li class="layui-nav-item" th:if="${null != session.teacher &amp;&amp; '' != session.teacher  }">
+                欢迎你：<span th:text="${session.teacher.tname}"/></li>
+            <!--            <p th:text="${session.admin.account}"/>-->
+
+
+            <li class="layui-nav-item"><a href="/admin/exit">注销</a></li>
+        </ul>
+    </div>
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+
+
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" th:each="one : ${menus}">
+                <li class="layui-nav-item">
+                    <a style="" class="" href="javascript:;">
+                        <span th:text="${one.key}"></span>
+                    </a>
+
+                    <dl class="layui-nav-child" th:each="two: ${one.value}">
+                        <dd><a th:href="${two.url}" target="main_self_frame" th:text="${two.name}"></a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <iframe src="" name="main_self_frame" frameborder="0" class="layadmin-iframe"
+                style="width: 100%;"
+                height="100%">
+        </iframe>
+    </div>
+
+    <div class="layui-footer">
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    // e.preventDefault();：设置a的点击事件不跳转到另一个页面
+    // $("iframeMain").attr("src",$(this).attr("href"));：给iframe添加src属性，值为a的href值
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+</script>
+</body>
+</html>
