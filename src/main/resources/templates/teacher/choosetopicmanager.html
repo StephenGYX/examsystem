@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>试卷管理</title>
+    <title>题库管理-选择题</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
@@ -17,7 +17,7 @@
                 <div class="layui-card-body ">
                     <form class="layui-form  layui-col-space5">
                         <div class="layui-inline layui-show-xs-block">
-                            <input type="text" name="ntitle" placeholder="请输入需求标题关键字" autocomplete="off"
+                            <input type="text" name="ntitle" placeholder="请输入题目关键字" autocomplete="off"
                                    class="layui-input">
                         </div>
 
@@ -145,15 +145,6 @@
 									table.reload('need');
 
 								});
-							},
-							error: function () {
-								//window.location.href = "/404.html";
-								layer.open({
-									type: 2,
-									content: "/404.html",
-									area: ['60%', '60%'],
-									title: '权限不足'
-								});
 							}
 						});
 					} else {
@@ -172,40 +163,41 @@
 		//搜索
 		form.on('submit(search)', function (data) {
 			var data = data.field;
-			table.render({
-				elem: '#need'
-				, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
-				, page: true //开启分页
-				, where: {
-					"ntitle": data.ntitle,
-					"verifyState": data.verifyState,
-					"tenderState": data.tenderState,
-					"startTime": data.startDate,
-					"endTime": data.endDate
-				}
-				, response: {
-					countName: 'count', //规定数据总数的字段名称，默认：count
-					dataName: 'datas' //规定数据列表的字段名称，默认：data
-				}
-				, cols: [
-					[ //表头
-						{type: 'checkbox', fixed: 'left'},
-						{title: '序号', type: 'numbers', width: '5%'}
-						, {field: 'sname', title: '科目', align: 'center'}
-						, {field: 'title', title: '题目名', align: 'center'}
-						, {field: 'option1', title: '选项一', align: 'center'}
-						, {field: 'option2', title: '选项二', align: 'center'}
-						, {field: 'option3', title: '选项三', align: 'center'}
-						, {field: 'option4', title: '选项四', align: 'center'}
-						, {field: 'correct', title: '正确选项', align: 'center'}
-						, {field: 'qtime', title: '生成时间', align: 'center'}
-						, {title: '操作', toolbar: '#barDemo', align: 'center'}
+			if (dateCompare(data.startDate, data.endDate)) {
+				table.render({
+					elem: '#need'
+					, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
+					, page: true //开启分页
+					, where: {
+						"ntitle": data.ntitle,
+						"verifyState": data.verifyState,
+						"tenderState": data.tenderState,
+						"startTime": data.startDate,
+						"endTime": data.endDate
+					}
+					, response: {
+						countName: 'count', //规定数据总数的字段名称，默认：count
+						dataName: 'datas' //规定数据列表的字段名称，默认：data
+					}
+					, cols: [
+						[ //表头
+							{type: 'checkbox', fixed: 'left'},
+							{title: '序号', type: 'numbers', width: '5%'}
+							, {field: 'sname', title: '科目', align: 'center'}
+							, {field: 'title', title: '题目名', align: 'center'}
+							, {field: 'option1', title: '选项一', align: 'center'}
+							, {field: 'option2', title: '选项二', align: 'center'}
+							, {field: 'option3', title: '选项三', align: 'center'}
+							, {field: 'option4', title: '选项四', align: 'center'}
+							, {field: 'correct', title: '正确选项', align: 'center'}
+							, {field: 'qtime', title: '生成时间', align: 'center'}
+							, {title: '操作', toolbar: '#barDemo', align: 'center'}
+						]
 					]
-				],
-				done: function () {
-
-				}
-			});
+				});
+			} else {
+				layer.msg("请输入正确的日期范围！");
+			}
 			return false;
 		});
 	});
