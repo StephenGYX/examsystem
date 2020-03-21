@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>试卷管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
+    <script th:src="@{/layuires/layui/layui.js}"></script>
+    <script th:src="@{/layuires/static/js/}"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row  layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form  layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="ntitle" placeholder="请输入需求标题关键字" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <select name="verifyState" lay-filter="verifyState">
+                                <option value="">请选择科目</option>
+                                <option value="已审核">已审核</option>
+                                <option value="待审核">待审核</option>
+                                <option value="未过审">未过审</option>
+                            </select>
+                        </div>
+
+
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test20" placeholder="请选择开始日期"
+                                       name="startDate">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test21" placeholder="请选择结束日期"
+                                       name="endDate">
+                            </div>
+                        </div>
+
+
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="search"><i
+                                    class="layui-icon">&#xe615;</i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-body ">
+                    <table class="layui-hide" id="topic" lay-filter="topic"></table>
+                </div>
+
+                <div class="layui-card-body ">
+                    <script type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+	layui.use('laydate', function () {
+		var laydate = layui.laydate;
+		//选中后的回调
+		laydate.render({
+			elem: '#test20'
+			, done: function (value, date) {
+			}
+		});
+
+		laydate.render({
+			elem: '#test21'
+			, done: function (value, date) {
+			}
+		});
+	});
+
+	function dateCompare(startDate, endDate) {
+		var oDate1 = new Date(startDate);
+		var oDate2 = new Date(endDate);
+		if (oDate1 > oDate2) {
+			console.log('第一个大');
+			return false;
+		} else {
+			console.log('第二个大');
+			return true;
+		}
+	}
+
+
+	layui.use('table', function () {
+		var table = layui.table,
+			form = layui.form;
+		table.render({
+			elem: '#topic'
+			, url: '/topic/chooseList' //数据接口
+			, page: true //开启分页
+			, cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+			, response: {
+				dataName: 'datas' //规定数据列表的字段名称，默认：data
+			}
+			, cols: [
+				[ //表头
+					{type: 'checkbox', fixed: 'left'},
+					{title: '序号', type: 'numbers', width: '5%'}
+					, {field: 'sname', title: '科目', align: 'center'}
+					, {field: 'title', title: '题目名', align: 'center'}
+					, {field: 'option1', title: '选项一', align: 'center'}
+					, {field: 'option2', title: '选项二', align: 'center'}
+					, {field: 'option3', title: '选项三', align: 'center'}
+					, {field: 'option4', title: '选项四', align: 'center'}
+					, {field: 'correct', title: '正确选项', align: 'center'}
+					, {field: 'qtime', title: '生成时间', align: 'center'}
+					, {title: '操作', toolbar: '#barDemo', align: 'center'}
+				]
+			],
+			done: function () {
+
+			}
+		});
+
+
+		//监听工具条
+		table.on('tool(topic)', function (obj) {
+			var data = obj.data;//获取点击行数据
+			if (obj.event === 'del') {
+				layer.confirm('确认删除该题目吗?', function (index) {
+					if (data.nstatus === '未过审') {
+						$.ajax({
+							url: "/api-back/need/delete",
+							type: "GET",
+							data: {nid: data.nid},
+							dataType: 'json',
+							success: function (result) {
+								layer.alert("删除成功", {icon: 1}, function (index1) {
+									layer.close(index1);
+									table.reload('need');
+
+								});
+							},
+							error: function () {
+								//window.location.href = "/404.html";
+								layer.open({
+									type: 2,
+									content: "/404.html",
+									area: ['60%', '60%'],
+									title: '权限不足'
+								});
+							}
+						});
+					} else {
+						layer.msg('只有未过审的需求才可以删除，请确认！', {icon: 2});
+					}
+				});
+			} else if (obj.event === 'verify') {
+				if (data.nstatus == '待审核') {
+					xadmin.open('审核需求页面', '/api-back/need/verify/?nid=' + data.nid);
+				} else {
+					layer.msg('只有待审核的需求才可以进行审核，请确认！', {icon: 2});
+				}
+			}
+		});
+
+		//搜索
+		form.on('submit(search)', function (data) {
+			var data = data.field;
+			table.render({
+				elem: '#need'
+				, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
+				, page: true //开启分页
+				, where: {
+					"ntitle": data.ntitle,
+					"verifyState": data.verifyState,
+					"tenderState": data.tenderState,
+					"startTime": data.startDate,
+					"endTime": data.endDate
+				}
+				, response: {
+					countName: 'count', //规定数据总数的字段名称，默认：count
+					dataName: 'datas' //规定数据列表的字段名称，默认：data
+				}
+				, cols: [
+					[ //表头
+						{type: 'checkbox', fixed: 'left'},
+						{title: '序号', type: 'numbers', width: '5%'}
+						, {field: 'sname', title: '科目', align: 'center'}
+						, {field: 'title', title: '题目名', align: 'center'}
+						, {field: 'option1', title: '选项一', align: 'center'}
+						, {field: 'option2', title: '选项二', align: 'center'}
+						, {field: 'option3', title: '选项三', align: 'center'}
+						, {field: 'option4', title: '选项四', align: 'center'}
+						, {field: 'correct', title: '正确选项', align: 'center'}
+						, {field: 'qtime', title: '生成时间', align: 'center'}
+						, {title: '操作', toolbar: '#barDemo', align: 'center'}
+					]
+				],
+				done: function () {
+
+				}
+			});
+			return false;
+		});
+	});
+</script>
+</html>

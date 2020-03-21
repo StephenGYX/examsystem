@@ -52,19 +52,5 @@ mybatis:
   mapper-locations: classpath:/mybatis-mappers/**
   configuration:
     mapUnderscoreToCamelCase: true
-
-#logging:
-#  file:
-#    path: D:\MyProject\myfourseason
-
-#对应apicontroller
-api-url-front: /api-front
-api-url-back: /api-back
-
 server:
   port: 8080
-
-#爬虫相关路径
-worm:
-  #互联网动态
-  url: http://it.sohu.com/911?spm=smpc.ch30.top-subnav.2.1582114678013lQLIwp9
