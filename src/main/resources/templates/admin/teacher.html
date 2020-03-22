@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>教师管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
+    <script th:src="@{/layuires/layui/layui.js}"></script>
+    <script th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+
+<a style="margin-top: 5%;margin-left: 5%" class="layui-btn" id="add">新增教师</a>
+<table id="teacher" lay-filter="teacher"></table>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="addTeacher">
+    <form class="layui-form">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="taccount" required lay-verify="required" placeholder="请输入账号" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码：</label>
+            <div class="layui-input-inline">
+                <input type="password" name="tpassword" required lay-verify="required" placeholder="请输入密码"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="tname" required lay-verify="required" placeholder="请输入姓名" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">学历：</label>
+            <div class="layui-input-inline">
+                <select name="teducation" lay-verify="required">
+                    <option value="博士">博士</option>
+                    <option value="硕士">硕士</option>
+                    <option value="本科">本科</option>
+                    <option value="大专">大专</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="tsex" value="男" title="男" checked>
+                <input type="radio" name="tsex" value="女" title="女">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">教学课程：</label>
+            <div class="layui-input-inline" id="addbox">
+                <!--                <input type="checkbox" name="java" title="java">-->
+                <!--                <input type="checkbox" name="C++" title="C++">-->
+
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">出生日期：</label>
+            <div class="layui-input-inline">
+                <input lay-verify="required" type="text" class="layui-input" name="tbirth" id="tbirth">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="add">新增教师</button>
+            </div>
+        </div>
+    </form>
+</script>
+
+<script>
+    layui.use(['table', 'form', 'jquery', 'laydate'], function () {
+        var table = layui.table,
+            form = layui.form,
+            laydate = layui.laydate,
+            $ = layui.jquery;
+        table.render({
+            elem: '#teacher'
+            , url: '/admin/teacher' //数据接口
+            , page: true //开启分页
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , response: {
+                dataName: 'datas' //规定数据列表的字段名称，默认：data
+            }
+            , cols: [
+                [ //表头
+
+                    {title: '序号', type: 'numbers', width: '5%'}
+                    , {field: 'taccount', title: '账号', align: 'center'}
+                    , {field: 'tname', title: '姓名', align: 'center'}
+                    , {field: 'tsex', title: '性别', align: 'center'}
+                    , {field: 'teducation', title: '学历', align: 'center'}
+                    , {field: 'tbirth', title: '出生日期', align: 'center'}
+                    , {field: 'tregtime', title: '注册时间', align: 'center'}
+                    , {title: '操作', toolbar: '#barDemo', align: 'center'}
+                ]
+            ]
+        });
+
+
+        //监听工具条
+        table.on('tool(teacher)', function (obj) {
+            var data = obj.data;//获取点击行数据
+            if (obj.event === 'del') {
+                layer.confirm('确认删除该教师吗?', function (index) {
+
+                    $.ajax({
+                        url: "/admin/delTeacher",
+                        type: "POST",
+                        data: data,
+                        dataType: 'text',
+                        success: function (result) {
+                            if (result === 'true') {
+                                layer.alert("删除成功");
+                                table.reload('teacher');
+                            } else if (result === 'have') {
+                                layer.alert('该老师有出试卷不可删除');
+                            }else {
+                                layer.alert('删除失败');
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        //添加教师
+        $('#add').click(function () {
+
+
+            layer.open({
+                type: 1 //Page层类型
+                , area: ['350px', '550px']
+                , title: '新增教师'
+                , shade: 0.3 //遮罩透明度
+                , anim: 4 //0-6的动画形式，-1不开启
+                , content: $("#addTeacher").html()
+            });
+            // $('#addbox').empty();
+            //动态获取课程
+            $.ajax({
+                url: "/admin/getSubject",
+                type: "POST",
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+
+                    for (var i = 0; i < result.length; i++) {
+
+                        $('#addbox').append('<input type="checkbox"  name="tsubject" value="' + result[i].sid + '" title="' + result[i].sname + '">');
+                        form.render();
+                    }
+                }
+            });
+
+
+            laydate.render({
+                elem: '#tbirth' //指定元素
+            });
+            //重新渲染
+            form.render();
+
+            form.on('submit(add)', function (data) {
+
+                //获取checkbox数据
+                var quotation = new Array();
+                $("input:checkbox[name='tsubject']:checked").each(function () {
+                    quotation.push($(this).val());
+                });
+                var json = {};
+                for (var i = 0; i < quotation.length; i++) {
+                    json[i] = quotation[i];
+                }
+
+                data.field.tsubject = json;
+
+                var day1 = new Date(data.field.tbirth);
+                var day2 = new Date();
+                if ((day2 - day1) / (1000 * 60 * 60 * 24 * 365) < 20 || (day2 - day1) / (1000 * 60 * 60 * 24 * 365) > 60) {
+                    layer.alert('教师的年龄应该在20~60岁之间');
+                } else if (data.field.taccount.length != 6) {
+                    layer.alert('账号只能6位');
+                } else if (data.field.tpassword.length > 8 || data.field.tpassword.length < 6) {
+                    layer.alert('密码只能6~8位');
+                } else if (data.field.tname.length > 4 || data.field.tname.length < 2) {
+                    layer.alert('姓名只能2~4位');
+                } else if (data.field.tsubject.length <= 0) {
+                    layer.alert('请选择教学课程');
+                } else {
+                    data.field.tregtime = new Date().format("yyyy-MM-dd");
+
+                    $.ajax({
+                        url: "/admin/addTeacher",
+                        type: "POST",
+                        data: data.field,
+                        dataType: 'text',
+                        success: function (result) {
+                            if (result === 'true') {
+                                layer.alert('新增成功');
+                                layer.closeAll();
+                                table.reload('teacher');
+                            } else if (result === 'false') {
+                                layer.alert('新增失败');
+                            } else if (result === 'have') {
+                                layer.alert('已有此账号，请重新新增');
+                            }
+
+                        }
+                    });
+
+                    console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+                }
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+
+        });
+
+    });
+
+
+    /**
+     *对Date的扩展，将 Date 转化为指定格式的String
+     *月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+     *年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+     *例子：
+     *(new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+     *(new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
+     */
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+</script>
+</body>
+</html>

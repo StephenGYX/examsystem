@@ -42,9 +42,6 @@ public class LoginServiceImpl implements LoginService{
             }else if (loginInfo.getPassword().equals(teacher.getTpassword())){
                 result = "true";
                 List<Subject> list = loginDao.findSubject(teacher.getTid());
-                for (int i = 0; i < list.size(); i++) {
-                    System.out.println(list.get(i).getSname());
-                }
                 session.setAttribute("teacher",teacher);
                 session.setAttribute("list",list);
             }else {
