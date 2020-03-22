@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>课程管理</title>
+    <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+    <script th:src="@{/layuires/layui/layui.js}"></script>
+    <script th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+<input type="button" id="add" class="layui-btn" value="新增课程">
+
+<table id="demo" lay-filter="test"></table>
+
+<script>
+
+	layui.use('table', function()
+    {
+        var table=layui.table;
+        table.render({
+	        elem: '#demo'
+	        ,url: "/subject/getList"
+	        ,page: true
+	         ,limit:5
+	         ,limits:[5]
+	         ,cols: [
+	     	    [
+                 {field: 'sname', title: '课程名', width:'100%'}
+                ]
+            ]
+        });
+    });
+
+	$('#add').click(function()
+    {
+	    layer.prompt({title:'请输入课程名称'},function(value, index, elem)
+	    {
+		    if(value.length>10)
+		    {
+			    layer.alert("课程名不得超过10字", {icon: 5});
+		    }
+		    else
+		    {
+			    $.ajax({
+				    type:"POST",
+                    url:"/subject/checkSubject",
+			         dataType:"text",
+			         data:{sname:value},
+                    success:function(msg)
+                    {
+                        if(msg==="yes")
+                        {
+	                        $.ajax({
+		                        type:"POST",
+		                        url:"/subject/addSubject",
+		                        dataType:"text",
+		                        data:{sname:value},
+		                        success:function(msg)
+		                        {
+			                        if(msg==="yes")
+			                        {
+				                        layer.open({
+					                        title: ['温馨提示'],
+					                        content: '新增成功',
+					                        btn: ['确定'],
+					                        closeBtn :0,
+					                        yes: function(){
+						                        window.location.href="/subject/toSubject";
+					                        }
+				                        });
+			                        }
+			                        else
+			                        {
+				                        layer.alert("新增失败，请重试", {icon: 5});
+			                        }
+		                        },
+		                        error:function ()
+		                        {
+			                        layer.alert("服务器正忙.....", {icon: 5});
+		                        }
+	                        });
+                        }
+                        else
+                        {
+                            layer.alert("该课程已存在", {icon: 5});
+                        }
+                    },
+                    error:function ()
+                    {
+                        layer.alert("服务器正忙.....", {icon: 5});
+                    }
+                });
+		    }
+	    });
+	});
+
+</script>
+
+</body>
+</html>
