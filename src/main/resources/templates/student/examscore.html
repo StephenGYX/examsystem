@@ -2,37 +2,39 @@
 <html lang="en" class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 	<meta charset="UTF-8">
-	<title>仲裁处理</title>
+	<title>查看成绩</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
 	<link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
 	<script th:src="@{/layuires/layui/layui.js}"></script>
 	<script th:src="@{/layuires/static/js/}"></script>
-	<header th:replace="header::html"></header>
+	<script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body class="lay-blog">
 		<div class="header">
 			<div class="header-wrap">
 				<h1 class="logo pull-left">
-					<a href="index.html">
-						<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
-					</a><i style="color: white">仲裁员个人中心</i>
+					<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
+					<i style="color: white;font-size: 20px">学生考试系统</i>
 				</h1>
 				<div class="blog-nav pull-right">
 					<ul class="layui-nav pull-left" id="menuUl">
-						<li class='layui-nav-item'><a href='javascript:;'>
-							<i class='layui-icon layui-icon-username' style='font-size: 15px'>我的</i></a>
+						<li class='layui-nav-item' th:if="${session.student!=null &amp;&amp; session.student!=''}">
+							<a href='javascript:;'>
+								<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
 							<dl class='layui-nav-child'>
-								<dd><a onclick="xadmin.open('个人资料','/api-front/arbitration/myDetails');">个人资料</a></dd>
-								<dd><a onclick="xadmin.open('修改密码页面','/api-front/employer/myPass');">修改密码</a></dd>
-								<dd><a href='/frontLogout'>注销登录</a></dd>
+								<dd><a id="saccount"></a></dd>
+								<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
+								<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
+								<dd><a onclick="logout()">注销登录</a></dd>
 							</dl>
 						</li>
+						<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
+							<a href='/studentexam/tologin' style='font-size: 15px'>请登录！</a></dd>
+						</li>
+						<li class='layui-nav-item'><a href='#' style='font-size: 15px'>我要考试</a></li>
+						<li class='layui-nav-item'><a href='/studentexam/exammain' style='font-size: 15px'>查看成绩</a></li>
 					</ul>
-
-					<a href="/api-front/getPage?pageName=index#" class="personal pull-left">
-						<i style="font-size: 15px">返回首页>>></i>
-					</a>
 				</div>
 			</div>
 		</div>
@@ -56,11 +58,8 @@
 									</div>
 									<div class="layui-inline">
 										<div class="layui-input-inline">
-											<select name="arbitrationType" id="arbitrationType" class="layui-select">
-												<option value="" selected="selected">--仲裁状态--</option>
-												<option value="6">仲裁中</option>
-												<option value="7">已曝光</option>
-												<option value="11">审核中</option>
+											<select name="subjectType" id="subjectType" class="layui-select">
+
 											</select>
 										</div>
 									</div>
@@ -71,10 +70,10 @@
 								</form>
 							</div>
 							<div class="layui-card-body ">
-								<table class="layui-hide" id="arbitrationTable" lay-filter="arbitrationTable" ></table>
+								<table class="layui-hide" id="testTable" lay-filter="testTable" ></table>
 							</div>
 							<script type="text/html" id="barDemo">
-								<a class="layui-btn layui-btn-xs" lay-event="details">详情</a>
+								<a class="layui-btn layui-btn-xs" lay-event="details">考试详情</a>
 							</script>
 						</div>
 					</div>
@@ -85,38 +84,53 @@
 	<script>
 		layui.config({
 		  base: '/layuires/static/js/'
-		}).use('blog');	
-		
+		}).use('blog');
+		layui.use('layer',function () {
+			var layer=layui.layer;
+		})
 	</script>
 </body>
 
 <script>
 	$(function () {
 		$.ajax({
-			type:'GET'
-			,url:'/api-front/arbitration/getRid'
-			,data:{}
-			,success:function (res) {
-				rid=res.uid;
-				$.ajax({
-					type:'GET'
-					,url:'/api-back/permission/menu'
-					,data:{"userId":rid}
-					,success:function (res) {
-						var menu=res.data;
-						for (var i=0;i<menu.length;i++){
-							if (menu[i].name === "仲裁处理") {
-								$('#menuUl').append("<li class='layui-nav-item layui-this'><a href='#'>" + menu[i].name + "</a></li>");
+			type: 'GET'
+			, url: '/studentexam/getSid'
+			, data: {}
+			, success: function (res) {
+				if (res === 'error') {
+					layer.alert('考生当前未登录，请先进行登录', {icon: 5});
+					window.location.href = '#';
+				} else {
+					document.getElementById("sname").innerText=res.sname;
+					document.getElementById("saccount").innerText=res.saccount;
+					$.ajax({
+						type: "get",
+						url: '/studentscore/searchType',
+						data: {},
+						success: function (msg) {
+							$("#subjectType").empty();
+							if (msg.length >0 ) {
+								$("#subjectType").append(new Option("---科目类型---", ""));
+								$.each(msg, function (index, item) {
+									$("#subjectType").append(new Option(item, item));
+								});
 							} else {
-								$('#menuUl').append("<li class='layui-nav-item'><a href='" + menu[i].href + "'>" + menu[i].name + "</a></li>");
+								$("#subjectType").append(new Option("暂无数据", ""));
 							}
+							layui.form.render("select");
+						},
+						error: function (msg) {
+							layer.msg("连接服务器超时，请及时通知老师管理员", {icon: 2})
 						}
-					}
-
-				})
+					})
+				}
 			}
-
+			, error:function () {
+				layer.msg('连接服务器超时，请及时通知老师管理员',{icon:6})
+			}
 		});
+
 	});
 
 	layui.use('laydate', function () {
@@ -142,8 +156,8 @@
 			layer=layui.layer,
 			form = layui.form;
 		table.render({
-			elem: '#arbitrationTable'
-			, url: '/api-front/arbitration/arbitrationTable' //数据接口
+			elem: '#testTable'
+			, url: '/studentscore/testTable' //数据接口
 			, page: true //开启分页
 			, cellMinWidth: 80 //全局定义常规单元格的最小宽度
 			, limits:[10,20]
@@ -154,23 +168,16 @@
 			, cols: [
 				[
 					{type:'numbers' ,align:'center',title:'序号'}
-					,{field:'oid', align:'center',title: '订单表id',style:'display:none;'}
-					,{field:'aid', align:'center',title: '仲裁id',width:'8%'}
-					,{field:'cause', title: '仲裁原因',width: '25%',align:'center'}
-					,{field:'employwin',align:'center',width: '12%',title: '雇主胜票数'}
-					,{field:'servicewin', align:'center',width: '13%', title: '服务商胜票数'}
-					,{field:'winer', align:'center',width: '13%', title: '获胜者'}
-					,{field:'pid', align:'center', title: '状态',width: '10%', templet: function (msg) {
-						if (msg.pid === '6')
-							return "仲裁中"
-						else if (msg.pid === '7')
-							return "已曝光"
-						else if (msg.pid==='11')
-							return "审核中"
-						else
-							return "已完成"
+					,{field:'eid', align:'center',title: '试卷id',style:'display:none;'}
+					,{field:'sid', align:'center',title: '学生id',style:'display:none;'}
+					,{field:'start', align:'center',title: '开始时间',width:170}
+					,{field:'end', title: '结束时间',width: 170,align:'center'}
+					,{field:'sname',align:'center',width: 250,title: '考生姓名',templet:function (res) {
+						return sname+"(ID:"+saccount+")"
 					}}
-					,{ fixed: 'right', title: '操作',  align: 'center',width: 100, toolbar: '#barDemo'}
+					,{field:'subject', align:'center',width: 150, title: '考试科目'}
+					,{field:'score', align:'center',width: 100, title: '成绩'}
+					,{ fixed: 'right', title: '操作',  align: 'center',width: 150, toolbar: '#barDemo'}
 				]
 			],
 			done: function () {
@@ -179,17 +186,18 @@
 
 		});
 		$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
+		$('table.layui-table thead tr th:eq(2)').addClass('layui-hide');//隐藏的曝光表id表头
 		//监听行工具事件
-		table.on('tool(arbitrationTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+		table.on('tool(testTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
 			var data = obj.data ,//获得当前行数据
 					layEvent = obj.event, //获得 lay-event 对应的值
-					oid=data.oid,
-					cause=data.cause;
+					eid=data.eid,
+					sid=data.sid;
 			if (layEvent === 'details') {
 				$.ajax({
-					url:'/api-front/arbitration/details',
+					url:'/studentscore/details',
 					type:"post",
-					data:{"oid":oid},
+					data:{"eid":eid,"sid":sid},
 					success:function (msg) {
 						layer.open({
 							type: 1 //Page层类型
@@ -202,12 +210,7 @@
 						});
 					},
 					error:function (msg) {
-						layer.open({
-							type:2,
-							content: "/404.html",
-							area:['1000px','600px'],
-							title:'权限不允许进行访问'
-						})
+						layer.msg('连接超时，请稍后重试')
 					}
 				})
 			}
@@ -218,15 +221,15 @@
 			var field = data.field;
 			if (dateCompare(field.startDate, field.endDate)) {
 				table.render({
-					elem: '#arbitrationTable'
-					, url: '/api-front/arbitration/arbitrationTable' //数据接口
+					elem: '#testTable'
+					, url: '/studentscore/testTable' //数据接口
 					, page: true //开启分页
 					, limits:[10,20]
 					, limit:10
 					, where: {
 						"starttime": field.startDate,
 						"endtime": field.endDate,
-						"arbitrationType":field.arbitrationType
+						"subjectType":field.subjectType
 					}
 					, response: {
 						dataName: 'datas' //规定数据列表的字段名称，默认：data
@@ -234,27 +237,21 @@
 					, cols: [
 						[
 							{type:'numbers' ,align:'center',title:'序号'}
-							,{field:'oid', align:'center',title: '订单表id',style:'display:none;'}
-							,{field:'aid', align:'center',title: '仲裁id',width:'8%'}
-							,{field:'cause', title: '仲裁原因',width: '25%',align:'center'}
-							,{field:'employwin',align:'center',width: '12%',title: '雇主胜票数'}
-							,{field:'servicewin', align:'center',width: '13%', title: '服务商胜票数'}
-							,{field:'winer', align:'center',width: '13%', title: '获胜者'}
-							,{field:'pid', align:'center', title: '状态',width: '10%', templet: function (msg) {
-								if (msg.pid === '6')
-									return "仲裁中"
-								else if (msg.pid === '7')
-									return "已曝光"
-								else if (msg.pid==='11')
-									return "审核中"
-								else
-									return "已完成"
+							,{field:'eid', align:'center',title: '试卷id',style:'display:none;'}
+							,{field:'sid', align:'center',title: '学生id',style:'display:none;'}
+							,{field:'start', align:'center',title: '开始时间',width:170}
+							,{field:'end', title: '结束时间',width: 170,align:'center'}
+							,{field:'sname',align:'center',width: 250,title: '考生姓名',templet:function (res) {
+								return sname+"(ID:"+saccount+")"
 							}}
-							,{ fixed: 'right', title: '操作',  align: 'center',width: 100, toolbar: '#barDemo'}
+							,{field:'subject', align:'center',width: 150, title: '考试科目'}
+							,{field:'score', align:'center',width: 100, title: '成绩'}
+							,{ fixed: 'right', title: '操作',  align: 'center',width: 150, toolbar: '#barDemo'}
 						]
 					]
 				});
 				$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
+				$('table.layui-table thead tr th:eq(2)').addClass('layui-hide');//隐藏的曝光表id表头
 			} else {
 				layer.msg("您的日期不正确，请重新输入！",{icon:2});
 			}
@@ -273,6 +270,27 @@
 		}
 	}
 
+	function logout() {
+		layer.confirm('确定要注销登录吗？', function (index) {
+			$.ajax({
+				url:'/studentexam/logout',
+				type:"get",
+				data:{},
+				success:function (msg) {
+					if (msg === "success") {
+						layer.msg("退出成功", {icon: 6});
+						window.location.href="#"
+					} else {
+						layer.msg("退出登录失败，请重试",{icon:5})
+					}
+				},
+				error:function (msg) {
+					layer.msg('连接超时，请稍后重试')
+				}
+			})
+		})
+
+	}
 
 </script>
 

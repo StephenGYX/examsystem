@@ -8,35 +8,34 @@
 	<link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
 	<script th:src="@{/layuires/layui/layui.js}"></script>
 	<script th:src="@{/layuires/static/js/}"></script>
-	<header th:replace="header::html"></header>
+	<script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body class="lay-blog">
 		<div class="header">
 			<div class="header-wrap">
 				<h1 class="logo pull-left">
-					<a href="index.html">
-						<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
-					</a><i style="color: white">学生考试系统</i>
+					<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
+					<i style="color: white;font-size: 20px">学生考试系统</i>
 				</h1>
-				<ul class="layui-nav pull-left" id="menuUl">
-
-					<li class='layui-nav-item' th:if="${session.student!=null &amp;&amp; session.student!=''}">
+				<div class="blog-nav pull-right">
+					<ul class="layui-nav pull-left" id="menuUl">
+						<li class='layui-nav-item' th:if="${session.student!=null &amp;&amp; session.student!=''}">
 							<a href='javascript:;'>
 								<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
 							<dl class='layui-nav-child'>
-							<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
-							<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
-							<dd><a href='/frontLogout'>注销登录</a></dd>
+								<dd><a id="saccount"></a></dd>
+								<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
+								<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
+								<dd><a onclick="logout()">注销登录</a></dd>
 							</dl>
-					</li>
-					<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
-						<a href='/frontLogout'>请登录！</a></dd>
-					</li>
-
-
-					<li class='layui-nav-item'><a href='#'>我要考试</a></li>
-					<li class='layui-nav-item'><a href='#'>查看成绩</a></li>
-				</ul>
+						</li>
+						<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
+							<a href='/studentexam/tologin' style='font-size: 15px'>请登录！</a></dd>
+						</li>
+						<li class='layui-nav-item'><a href='/examscore/scoremain' style='font-size: 15px'>我要考试</a></li>
+						<li class='layui-nav-item'><a href='#' style='font-size: 15px'>查看成绩</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 		<div class="container-wrap">
@@ -44,33 +43,46 @@
 				<div class="contar-wrap" style="width: 1000px;margin-left: -15%;">
 					<div class="item" style="width: 1000px">
 						<div class="item-box  layer-photos-demo1 layer-photos-demo">
-							<div class="layui-card-body ">
-								<form class="layui-form  layui-col-space5">
-									<div class="layui-inline">
-										<div class="layui-input-inline">
-											<input type="text" class="layui-input" id="startDate" placeholder="请选择开始日期"
-												   name="startDate">
-										</div>
+							<form class="layui-form" action="" lay-filter="example">
+								<div class="layui-form-item">
+									<label class="layui-form-label-col" style="margin-left: 50px">1、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
+									<label class="layui-form-label">答案：</label>
+									<div class="layui-input-block">
+										<input name="username" class="layui-input" type="text" placeholder="请输入答案" autocomplete="off" lay-verify="title">
 									</div>
-									<div class="layui-inline">
-										<div class="layui-input-inline">
-											<input type="text" class="layui-input" id="endDate" placeholder="请选择结束日期" name="endDate">
-										</div>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label-col" style="margin-left: 50px">2、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
+									<label class="layui-form-label">答案：</label>
+									<div class="layui-input-block">
+										<input name="qid" title="A、这是A" type="radio" value="A、这是A" >
+										<input name="qid" title="B、这是B" type="radio" value="B、这是B" >
+										<input name="qid" title="C、这是C" type="radio" value="C、这是C" >
+										<input name="qid" title="D、这是D" type="radio" value="D、这是D" >
 									</div>
-									<div class="layui-inline layui-show-xs-block">
-										<button class="layui-btn" lay-submit="" lay-filter="search"><i
-												class="layui-icon">&#xe615;</i></button>
+								</div>
+								<div class="layui-form-item">
+									<label class="layui-form-label-col" style="margin-left: 50px">3、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
+									<label class="layui-form-label">答案：</label>
+									<div class="layui-input-block">
+										<input name="sex" title="对" type="radio" value="对">
+										<input name="sex" title="错" type="radio" value="错">
 									</div>
-								</form>
-							</div>
-							<div class="layui-card-body ">
-								<table class="layui-hide" id="voteTable" lay-filter="voteTable" ></table>
-							</div>
-							<script type="text/html" id="barDemo">
-								<a class="layui-btn layui-btn-xs" lay-event="vote-yes">赞同雇主</a>
-								<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="vote-no">赞同服务商</a>
-								<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="vote-details">详情</a>
-							</script>
+								</div>
+								<div class="layui-form-item layui-form-text">
+									<label class="layui-form-label-col" style="margin-left: 50px">3、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
+									<label class="layui-form-label">答案：</label>
+									<div class="layui-input-block">
+										<textarea name="desc" class="layui-textarea" placeholder="请输入内容"></textarea>
+									</div>
+								</div>
+
+								<div class="layui-form-item">
+									<div class="layui-input-block">
+										<button class="layui-btn" type="submit" lay-filter="demo1" lay-submit="">立即提交</button>
+									</div>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -80,7 +92,7 @@
 	<script>
 		layui.config({
 		  base: '/layuires/static/js/'
-		}).use('blog');	
+		}).use('blog');
 		layui.use('layer',function () {
 			var layer=layui.layer;
 		})
@@ -94,9 +106,12 @@
 			, url: '/studentexam/getSid'
 			, data: {}
 			, success: function (res) {
-				if (res==='error') {
-					layer.alert('考生当前未登录，请先进行登录',{icon:5});
-					window.location.href='#';
+				if (res === 'error') {
+					layer.alert('考生当前未登录，请先进行登录', {icon: 5});
+					window.location.href = '/studentexam/tologin';
+				} else {
+					document.getElementById("sname").innerText=res.sname;
+					document.getElementById("saccount").innerText=res.saccount;
 				}
 			}
 			, error:function () {
@@ -105,177 +120,52 @@
 		});
 	});
 
-
-	layui.use('laydate', function () {
-		var laydate = layui.laydate;
-		//选中后的回调
-		laydate.render({
-			elem: '#startDate'
-			, done: function (value, date) {
-				// layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+	layui.use(['layer','form'],function () {
+        var layer=layui.layer,
+            form=layui.form;
+		form.verify({
+			title: function(value){
+				var v=value.trim();
+				if(v.length ===0){
+					return '有填空或简单未完成';
+				}
 			}
 		});
 
-		laydate.render({
-			elem: '#endDate'
-			, done: function (value, date) {
-				// layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+		//监听提交
+		form.on('submit(demo1)', function(data){
+			if (!validate_all()) {
+				return false;
 			}
 		});
 	});
 
-	layui.use(['table','form','layer'], function () {
-		var table = layui.table,
-			layer=layui.layer,
-			form = layui.form;
-		table.render({
-			elem: '#scoreTable'
-			, url: '/studentscore/scoreTable' //数据接口
-			, page: true //开启分页
-			, cellMinWidth: 80 //全局定义常规单元格的最小宽度
-			, limits:[10,20]
-			, limit:10
-			, response: {
-				dataName: 'datas' //规定数据列表的字段名称，默认：data
-			}
-			, cols: [
-				[
-					{type:'numbers' ,align:'center',title:'序号'}
-					,{field:'oid', align:'center',title: '订单表id',style:'display:none;'}
-					,{field:'aid', align:'center',title: '仲裁id',width:'10%'}
-					,{field:'cause', title: '仲裁原因',width: '50%',align:'center'}
-					,{ fixed: 'right', title: '操作',  align: 'center',width: 280, toolbar: '#barDemo'}
-				]
-			],
-			done: function () {
-				//checkPermission();
-			}
-
+	function validate_all(){
+		var count=0;
+		var radioName = new Array();
+		$(":radio").each(function(){
+			radioName.push($(this).attr("name"));
 		});
-		$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
-		//监听行工具事件
-		table.on('tool(voteTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-			var data = obj.data ,//获得当前行数据
-					layEvent = obj.event, //获得 lay-event 对应的值
-					oid=data.oid,
-					aid=data.aid,
-					cause=data.cause;
-			if (layEvent === 'vote-details') {
-				$.ajax({
-					url:'/api-front/arbitration/details',
-					type:"post",
-					data:{"oid":oid},
-					success:function (msg) {
-						layer.open({
-							type: 1 //Page层类型
-							,area: ['600px', '500px']
-							,title: '查看订单详情'
-							,shade: 0.3 //遮罩透明度
-							,anim: 1 //0-6的动画形式，-1不开启
-							,content:
-									'<div style="padding:50px;font-size: 15px"><div><p>雇主名称：'+msg.uname+'&nbsp;(ID:'+msg.nuseraccount+')</p></div><br><div><p>订单标题：'+msg.ntitle+'</p></div><br><div><p>订单内容：'+msg.ncontent+'</p></div><br><div><p>订单要求：'+msg.ndemand+'</p></div><br><div><p>订单金额：'+msg.nmoney+'(CNY)</p></div><br><div><p>时间：'+msg.nstarttime+'-至-'+msg.nendtime+'</p></div><br><div><p style="color: red">仲裁原因：'+cause+'</p></div></div>'
-						});
-					},
-					error:function (msg) {
-						layer.open({
-							type:2,
-							content: "/404.html",
-							area:['1000px','600px'],
-							title:'权限不允许进行访问'
-						})					}
-				})
-			} else if (layEvent === 'vote-yes') {
-				$.ajax({
-					type:'post'
-					,url:'/api-front/arbitration/vote'
-					,data:{"aid":aid,"operate":"yes"}
-					,success:function (msg) {
-						if (msg==="success") {
-							layer.msg('投票成功，请点击仲裁处理，查看投票情况',{icon:1});
-						} else {
-							layer.msg('投票失败，可能其他仲裁员已经对该订单进行了投票',{icon:6});
-						}
-						$(".layui-laypage-btn")[0].click();
-					}
-					,error:function () {
-						layer.open({
-							type:2,
-							content: "/404.html",
-							area:['1000px','600px'],
-							title:'权限不允许进行访问'
-						})					}
-				})
-			} else if (layEvent === 'vote-no') {
-				$.ajax({
-					type:'post'
-					,url:'/api-front/arbitration/vote'
-					,data:{"aid":aid,"operate":"no"}
-					,success:function (msg) {
-						if (msg==="success") {
-							layer.msg('投票成功，请点击仲裁处理，查看投票情况',{icon:1});
-						} else {
-							layer.msg('投票失败，可能其他仲裁员已经对该订单进行了投票',{icon:6});
-						}
-						$(".layui-laypage-btn")[0].click();
-					}
-					,error:function () {
-						layer.open({
-							type:2,
-							content: "/404.html",
-							area:['1000px','600px'],
-							title:'权限不允许进行访问'
-						})					}
-				})
+		$(":checkbox").each(function(){
+			radioName.push($(this).attr("name"));
+		});
+		radioName.sort();
+		$.unique(radioName);
+		$.each(radioName,function(i,val){
+			if (!checkRadio(val)) {
+				count++;
 			}
 		});
-
-		//搜索
-		form.on('submit(search)', function (data) {
-			var field = data.field;
-			if (dateCompare(field.startDate, field.endDate)) {
-				table.render({
-					elem: '#voteTable'
-					, url: '/api-front/arbitration/voteTable' //数据接口
-					, page: true //开启分页
-					, limits:[10,20]
-					, limit:10
-					, where: {
-						"starttime": field.startDate,
-						"endtime": field.endDate,
-					}
-					, response: {
-						dataName: 'datas' //规定数据列表的字段名称，默认：data
-					}
-					, cols: [
-						[
-							{type:'numbers' ,align:'center',title:'序号'}
-							,{field:'oid', align:'center',title: '订单表id',style:'display:none;'}
-							,{field:'aid', align:'center',title: '仲裁id',width:'10%'}
-							,{field:'cause', title: '仲裁原因',width: '50%',align:'center'}
-							,{ fixed: 'right', title: '操作',  align: 'center',width: 280, toolbar: '#barDemo'}
-
-						]
-					]
-				});
-				$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
-			} else {
-				layer.msg("您的日期不正确，请重新输入！",{icon:2});
-			}
-			return false;
-		});
-		//checkPermission();
-	});
-
-	function dateCompare(startDate, endDate) {
-		var oDate1 = new Date(startDate);
-		var oDate2 = new Date(endDate);
-		if (oDate1 > oDate2) {
+		if (count>0) {
+			layer.alert("您还有未选择项，请选择，谢谢~",{icon:5});
 			return false;
 		} else {
 			return true;
 		}
 	}
-
+	function checkRadio(radioName){
+		return $("input[name="+radioName+"]:checked").val() == null ? false : true;
+	}
 
 </script>
 
