@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.examsystem.dao.StudentExamDao">
+    <select id="examCode" parameterType="java.lang.String" resultType="com.example.examsystem.bean.Exam">
+        select * from exam where ecode=#{ecode} and #{nowdate} between estart and eend
+    </select>
+
+    <select id="examQuestion" parameterType="java.lang.Integer" resultType="com.example.examsystem.bean.Question">
+        select * from question where qid in(select qid from examquestion where eid=#{eid})
+    </select>
+
+    <select id="reviewExam" parameterType="java.lang.String" resultType="int">
+        select count(*) from studentexam where eid in(select eid from exam where ecode=#{ecode}) and sid=#{sid}
+    </select>
+</mapper>

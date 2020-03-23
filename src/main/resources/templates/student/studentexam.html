@@ -3,7 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>我要考试</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
 	<link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
 	<link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
 	<script th:src="@{/layuires/layui/layui.js}"></script>
@@ -23,7 +24,7 @@
 							<a href='javascript:;'>
 								<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
 							<dl class='layui-nav-child'>
-								<dd><a id="saccount"></a></dd>
+								<dd><a id="saccount" onclick="onAccount()"></a></dd>
 								<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
 								<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
 								<dd><a onclick="logout()">注销登录</a></dd>
@@ -32,8 +33,8 @@
 						<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
 							<a href='/studentexam/tologin' style='font-size: 15px'>请登录！</a></dd>
 						</li>
-						<li class='layui-nav-item'><a href='/examscore/scoremain' style='font-size: 15px'>我要考试</a></li>
-						<li class='layui-nav-item'><a href='#' style='font-size: 15px'>查看成绩</a></li>
+						<li class='layui-nav-item'><a href='/studentexam/exammain' style='font-size: 15px'>我要考试</a></li>
+						<li class='layui-nav-item'><a href='/examscore/scoremain' style='font-size: 15px'>查看成绩</a></li>
 					</ul>
 				</div>
 			</div>
@@ -42,47 +43,7 @@
 			<div class="container">
 				<div class="contar-wrap" style="width: 1000px;margin-left: -15%;">
 					<div class="item" style="width: 1000px">
-						<div class="item-box  layer-photos-demo1 layer-photos-demo">
-							<form class="layui-form" action="" lay-filter="example">
-								<div class="layui-form-item">
-									<label class="layui-form-label-col" style="margin-left: 50px">1、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
-									<label class="layui-form-label">答案：</label>
-									<div class="layui-input-block">
-										<input name="username" class="layui-input" type="text" placeholder="请输入答案" autocomplete="off" lay-verify="title">
-									</div>
-								</div>
-								<div class="layui-form-item">
-									<label class="layui-form-label-col" style="margin-left: 50px">2、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
-									<label class="layui-form-label">答案：</label>
-									<div class="layui-input-block">
-										<input name="qid" title="A、这是A" type="radio" value="A、这是A" >
-										<input name="qid" title="B、这是B" type="radio" value="B、这是B" >
-										<input name="qid" title="C、这是C" type="radio" value="C、这是C" >
-										<input name="qid" title="D、这是D" type="radio" value="D、这是D" >
-									</div>
-								</div>
-								<div class="layui-form-item">
-									<label class="layui-form-label-col" style="margin-left: 50px">3、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
-									<label class="layui-form-label">答案：</label>
-									<div class="layui-input-block">
-										<input name="sex" title="对" type="radio" value="对">
-										<input name="sex" title="错" type="radio" value="错">
-									</div>
-								</div>
-								<div class="layui-form-item layui-form-text">
-									<label class="layui-form-label-col" style="margin-left: 50px">3、输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框输入框框</label>
-									<label class="layui-form-label">答案：</label>
-									<div class="layui-input-block">
-										<textarea name="desc" class="layui-textarea" placeholder="请输入内容"></textarea>
-									</div>
-								</div>
-
-								<div class="layui-form-item">
-									<div class="layui-input-block">
-										<button class="layui-btn" type="submit" lay-filter="demo1" lay-submit="">立即提交</button>
-									</div>
-								</div>
-							</form>
+						<div class="item-box  layer-photos-demo1 layer-photos-demo" id="questionDiv">
 						</div>
 					</div>
 				</div>
@@ -100,18 +61,29 @@
 </body>
 
 <script>
+	var account;
+	var name;
 	$(function () {
 		$.ajax({
 			type: 'GET'
 			, url: '/studentexam/getSid'
 			, data: {}
 			, success: function (res) {
-				if (res === 'error') {
+				if (res.ssex === 'error') {
 					layer.alert('考生当前未登录，请先进行登录', {icon: 5});
 					window.location.href = '/studentexam/tologin';
+				} else if (res.ssex === 'online') {
+					document.getElementById("sname").innerText = res.sname;
+					document.getElementById("saccount").innerText = res.saccount;
+					account = res.saccount;
+					name = res.sname;
+					layer.alert('考卷等老师批改后可以进行成绩查询', {icon: 6});
 				} else {
-					document.getElementById("sname").innerText=res.sname;
-					document.getElementById("saccount").innerText=res.saccount;
+					document.getElementById("sname").innerText = res.sname;
+					document.getElementById("saccount").innerText = res.saccount;
+					account = res.saccount;
+					name = res.sname;
+					examnum();
 				}
 			}
 			, error:function () {
@@ -136,7 +108,10 @@
 		form.on('submit(demo1)', function(data){
 			if (!validate_all()) {
 				return false;
+			} else {
+				window.onbeforeunload=null;
 			}
+
 		});
 	});
 
@@ -167,6 +142,74 @@
 		return $("input[name="+radioName+"]:checked").val() == null ? false : true;
 	}
 
+	function logout() {
+		layer.confirm('确定要注销登录吗？', function (index) {
+			$.ajax({
+				url:'/studentexam/logout',
+				type:"get",
+				data:{},
+				success:function (msg) {
+					if (msg === "success") {
+						layer.msg("退出成功", {icon: 6});
+						window.location.href="/studentexam/tologin"
+					} else {
+						layer.msg("退出登录失败，请重试",{icon:5})
+					}
+				},
+				error:function (msg) {
+					layer.msg('连接超时，请稍后重试')
+				}
+			})
+		})
+
+	}
+
+	function onAccount() {
+		layer.alert('当前登录学生姓名：'+name+'，账号：'+account,{icon:6})
+	}
+
+	//提交考试码开始考试
+	function examnum() {
+		layer.prompt({title: '请输入考试码，并确认', area: ['300px', '20px'], formType: 2,btn:['开始考试']}, function(text, index) {
+			text = text.trim();
+			if (text.length > 0 && text.length <= 15) {
+				window.onbeforeunload = function(e) {
+					e.returnValue ="确定要离开本界面吗";
+				};
+				$.ajax({
+					url:'/studentexam/examnum'
+					,type:'post'
+					,data:{"examnum":text}
+					,success:function (res) {
+						if (res[0].qtime === 'error') {
+							layer.msg('该考试码不在当前考试时间段', {icon: 5});
+						} else {
+							$("#questionDiv").append("<form class='layui-form' method='post' action='/studentexam/doexam' lay-filter='example' id='questionForm'></form>");
+							for (var i = 0; i < res.length; i++) {
+								//1选择 2填空 3判断 4简答
+								if (res[i].qtype===1) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='"+res[i].qid+"' title='A、"+res[i].option1+"' type='radio' value='"+res[i].option1+"' ><input name='"+res[i].qid+"' title='B、"+res[i].option2+"' type='radio' value='"+res[i].option2+"' ><input name='"+res[i].qid+"' title='C、"+res[i].option3+"' type='radio' value='"+res[i].option3+"' ><input name='"+res[i].qid+"' title='D、"+res[i].option4+"' type='radio' value='"+res[i].option4+"' ></div></div>")
+								} else if (res[i].qtype===2) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='"+res[i].qid+"' class='layui-input' type='text' placeholder='请输入答案' autocomplete='off' lay-verify='title'></div></div>")
+								} else if (res[i].qtype===3) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='"+res[i].qid+"' title='"+res[i].option1+"' type='radio' value='"+res[i].option1+"' ><input name='"+res[i].qid+"' title='"+res[i].option2+"' type='radio' value='"+res[i].option2+"' ></div></div>")
+								} else if (res[i].qtype===4) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><textarea name='"+res[i].qid+"' class='layui-textarea'  placeholder='请输入简答' autocomplete='off' lay-verify='title'></textarea></div></div>")
+								}
+							}
+							$("#questionForm").append("<div class='layui-form-item'><div class='layui-input-block'><button class='layui-btn' type='submit' lay-filter='demo1' lay-submit=''>立即提交</button></div></div>")
+						}
+						layui.form.render();
+						layer.close(index);
+					}
+					,error:function () {
+						layer.msg('连接超时，请稍后重试')
+					}
+				})
+
+			}
+		});
+	}
 </script>
 
 </html>

@@ -23,7 +23,7 @@
 							<a href='javascript:;'>
 								<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
 							<dl class='layui-nav-child'>
-								<dd><a id="saccount"></a></dd>
+								<dd><a id="saccount" onclick="onAccount()"></a></dd>
 								<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
 								<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
 								<dd><a onclick="logout()">注销登录</a></dd>
@@ -32,8 +32,8 @@
 						<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
 							<a href='/studentexam/tologin' style='font-size: 15px'>请登录！</a></dd>
 						</li>
-						<li class='layui-nav-item'><a href='#' style='font-size: 15px'>我要考试</a></li>
-						<li class='layui-nav-item'><a href='/studentexam/exammain' style='font-size: 15px'>查看成绩</a></li>
+						<li class='layui-nav-item'><a href='/studentexam/exammain' style='font-size: 15px'>我要考试</a></li>
+						<li class='layui-nav-item'><a href='#' style='font-size: 15px'>查看成绩</a></li>
 					</ul>
 				</div>
 			</div>
@@ -92,6 +92,8 @@
 </body>
 
 <script>
+	var account;
+	var name;
 	$(function () {
 		$.ajax({
 			type: 'GET'
@@ -104,6 +106,8 @@
 				} else {
 					document.getElementById("sname").innerText=res.sname;
 					document.getElementById("saccount").innerText=res.saccount;
+					account=res.saccount;
+					name=res.sname;
 					$.ajax({
 						type: "get",
 						url: '/studentscore/searchType',
@@ -279,7 +283,7 @@
 				success:function (msg) {
 					if (msg === "success") {
 						layer.msg("退出成功", {icon: 6});
-						window.location.href="#"
+						window.location.href="/studentexam/tologin"
 					} else {
 						layer.msg("退出登录失败，请重试",{icon:5})
 					}
@@ -289,9 +293,10 @@
 				}
 			})
 		})
-
 	}
-
+	function onAccount() {
+		layer.alert('当前登录学生姓名：'+name+'，账号：'+account,{icon:6})
+	}
 </script>
 
 </html>
