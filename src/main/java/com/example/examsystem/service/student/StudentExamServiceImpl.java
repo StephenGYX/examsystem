@@ -82,12 +82,15 @@ public class StudentExamServiceImpl implements StudentExamService
 			answer.setQid(Long.valueOf(entry.getKey()));
 			answer.setAnswer(entry.getValue()[0]);
 			answer.setSid(Long.valueOf(student.getSid()));
+			Question que=studentExamDao.getType(entry.getKey());
+			answer.setQtype(que.getQtype());
+			answer.setCorrect(que.getCorrect());
 			answers.add(answer);
 		}
 		int index=studentExamDao.doexam(answers);
 		if (index>0)
 		{
-			SimpleDateFormat ed=new SimpleDateFormat("yyyy-MM-dd :hh:mm");
+			SimpleDateFormat ed=new SimpleDateFormat("yyyy-MM-dd hh:mm");
 			String doendtime=ed.format(new Date());
 			String dostarttime=(String)request.getSession().getAttribute("dostarttime");
 			index=studentExamDao.overexam(student.getSid(),exam.getEid()+"",dostarttime,doendtime);

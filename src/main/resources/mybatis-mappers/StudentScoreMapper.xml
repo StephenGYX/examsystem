@@ -4,4 +4,12 @@
     <select id="searchType" parameterType="java.lang.String" resultType="com.example.examsystem.bean.Subject">
         select * from subject
     </select>
+
+    <select id="testTable" parameterType="java.util.Map" resultType="com.example.examsystem.dto.ExamDto">
+        select se.*,t.tname,su.sname from (select s.eid,s.sid,s.starttime,s.endtime,s.score,e.tid,e.sid suid from studentexam s left join exam e on e.eid=s.eid where s.sid=#{sid}) se,teacher t,subject su where se.tid=t.tid and se.suid=su.sid order by se.endtime desc limit #{startP},#{endP};
+    </select>
+
+    <select id="testTableCount" parameterType="java.lang.String" resultType="int">
+        select count(*) from (select s.eid,s.sid,s.starttime,s.endtime,s.score,e.tid,e.sid suid from studentexam s left join exam e on e.eid=s.eid where s.sid=#{sid}) se,teacher t,subject su where se.tid=t.tid and se.suid=su.sid;
+    </select>
 </mapper>

@@ -12,6 +12,7 @@ public class Answer implements Serializable
   private long eid;
   private long qid;
   private long sid;
+  private long qtype;
   private String answer;
   private String correct;
 

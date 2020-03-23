@@ -22,4 +22,7 @@ public interface StudentExamDao
 	public int doexam(@Param("list")List<Answer> list);
 	//考试结束，提交考试关系表
 	public int overexam(@Param("eid")String eid,@Param("sid")String sid,@Param("start")String start,@Param("end")String end);
+	//获取题目类型
+	public Question getType(@Param("qid")String qid);
+
 }

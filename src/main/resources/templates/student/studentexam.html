@@ -105,6 +105,9 @@
 			if (!validate_all()) {
 				return false;
 			} else {
+				var index = layer.load(1, {
+					shade: [0.1,'#fff'] //0.1透明度的白色背景
+				});
 				submitexam();
 			}
 			return false;
@@ -207,13 +210,13 @@
 							};
 							$("#questionDiv").append("<form class='layui-form' lay-filter='example' id='questionForm'></form>");
 							for (var i = 0; i < res.length; i++) {
-								//1选择 2填空 3判断 4简答
+								//1选择 2判断  3填空 4简答
 								if (res[i].qtype === 1) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' title='A、" + res[i].option1 + "' type='radio' value='" + res[i].option1 + "' ><input name='" + res[i].qid + "' title='B、" + res[i].option2 + "' type='radio' value='" + res[i].option2 + "' ><input name='" + res[i].qid + "' title='C、" + res[i].option3 + "' type='radio' value='" + res[i].option3 + "' ><input name='" + res[i].qid + "' title='D、" + res[i].option4 + "' type='radio' value='" + res[i].option4 + "' ><input name='" + res[i].qid + "' type='text' value='未选择' style='display: none'></div></div>")
-								} else if (res[i].qtype === 2) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' class='layui-input' type='text' placeholder='请输入答案' autocomplete='off' lay-verify='title'></div></div>")
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' title='A、" + res[i].option1 + "' type='radio' value='A' ><input name='" + res[i].qid + "' title='B、" + res[i].option2 + "' type='radio' value='B' ><input name='" + res[i].qid + "' title='C、" + res[i].option3 + "' type='radio' value='C' ><input name='" + res[i].qid + "' title='D、" + res[i].option4 + "' type='radio' value='D' ><input name='" + res[i].qid + "' type='text' value='E' style='display: none'></div></div>")
 								} else if (res[i].qtype === 3) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' title='" + res[i].option1 + "' type='radio' value='" + res[i].option1 + "' ><input name='" + res[i].qid + "' title='" + res[i].option2 + "' type='radio' value='" + res[i].option2 + "' ><input name='" + res[i].qid + "'  type='text' value='未选择' style='display: none'></div></div>")
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' class='layui-input' type='text' placeholder='请输入答案' autocomplete='off' lay-verify='title'></div></div>")
+								} else if (res[i].qtype === 2) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' title='" + res[i].option1 + "' type='radio' value='" + res[i].option1 + "' ><input name='" + res[i].qid + "' title='" + res[i].option2 + "' type='radio' value='" + res[i].option2 + "' ><input name='" + res[i].qid + "'  type='text' value='无' style='display: none'></div></div>")
 								} else if (res[i].qtype === 4) {
 									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><textarea name='" + res[i].qid + "' class='layui-textarea'  placeholder='请输入简答' autocomplete='off' lay-verify='title'></textarea></div></div>")
 								}

@@ -13,10 +13,14 @@
         select count(*) from studentexam where eid in(select eid from exam where ecode=#{ecode}) and sid=#{sid}
     </select>
 
+    <select id="getType" parameterType="java.lang.String" resultType="com.example.examsystem.bean.Question">
+        select * from question where qid=#{qid}
+    </select>
+
     <insert id="doexam" parameterType="java.util.List">
-        insert into answer(eid, qid, sid, answer) values 
+        insert into answer(eid, qid, sid, answer,qtype,correct) values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.eid},#{item.qid},#{item.sid},#{item.answer})
+            (#{item.eid},#{item.qid},#{item.sid},#{item.answer},#{item.qtype},#{item.correct})
         </foreach>
     </insert>
 
