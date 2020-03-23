@@ -9,4 +9,6 @@ public interface ClassService
 	public abstract String addClass(String cname);
 
     String delClass(String cname);
+
+    String getClassAll();
 }

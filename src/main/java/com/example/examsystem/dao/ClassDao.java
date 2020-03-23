@@ -28,4 +28,7 @@ public interface ClassDao
 
 	@Delete("delete from class where cname = #{cname}")
     int delClass(String cname);
+
+	@Select("select * from class ")
+	List<ClassInfo> getClassAll();
 }
