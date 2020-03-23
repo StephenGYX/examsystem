@@ -194,7 +194,6 @@
                 }
 
                 data.field.tsubject = json;
-
                 var day1 = new Date(data.field.tbirth);
                 var day2 = new Date();
                 if ((day2 - day1) / (1000 * 60 * 60 * 24 * 365) < 20 || (day2 - day1) / (1000 * 60 * 60 * 24 * 365) > 60) {
@@ -205,7 +204,7 @@
                     layer.alert('密码只能6~8位');
                 } else if (data.field.tname.length > 4 || data.field.tname.length < 2) {
                     layer.alert('姓名只能2~4位');
-                } else if (data.field.tsubject.length <= 0) {
+                } else if (quotation.length < 1){
                     layer.alert('请选择教学课程');
                 } else {
                     data.field.tregtime = new Date().format("yyyy-MM-dd");
