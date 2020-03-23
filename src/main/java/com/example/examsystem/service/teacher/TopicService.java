@@ -7,15 +7,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface TopicService
 {
-	Results<TopicDto> chooseTopicListByPage(Integer offset, Integer limit);
+	Results<TopicDto> chooseTopicListByPage(Integer offset, Integer limit, String sid);
 
-	Results<TopicDto> blankTopicListByPage(Integer offset, Integer limit);
+	Results<TopicDto> blankTopicListByPage(Integer offset, Integer limit, String sid);
 
-	Results<TopicDto> shortTopicListByPage(Integer offset, Integer limit);
+	Results<TopicDto> shortTopicListByPage(Integer offset, Integer limit, String sid);
 
-	Results<TopicDto> judgeTopicListByPage(Integer offset, Integer limit);
+	Results<TopicDto> judgeTopicListByPage(Integer offset, Integer limit, String sid);
 
-	String blankAdd(String titles,String sid);
+	String blankAdd(String titles, String sid);
 
 	boolean bulkInsertBlank(MultipartFile file);
 
@@ -32,4 +32,6 @@ public interface TopicService
 	boolean bulkInsertShort(MultipartFile file);
 
 	int topicUpdate(Question question);
+
+	String delete(String qid);
 }

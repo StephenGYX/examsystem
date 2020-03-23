@@ -17,6 +17,7 @@ public class Exam  implements Serializable
   private String eduration;
   private String ecode;
   private String eregtime;
+  private String tips;
 
 
 }

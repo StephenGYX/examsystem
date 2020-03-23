@@ -28,14 +28,12 @@
             <li class="layui-nav-item"><a href="/admin/exit">注销</a></li>
         </ul>
     </div>
+
+
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
-
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-
-
-            <ul class="layui-nav layui-nav-tree" lay-filter="test" th:each="one : ${menus}">
-                <li class="layui-nav-item">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" >
+                <li class="layui-nav-item layui-nav-itemed" th:each="one : ${menus}">
                     <a style="" class="" href="javascript:;">
                         <span th:text="${one.key}"></span>
                     </a>
@@ -48,6 +46,8 @@
             </ul>
         </div>
     </div>
+
+
 
     <div class="layui-body">
         <iframe src="" name="main_self_frame" frameborder="0" class="layadmin-iframe"

@@ -3,6 +3,7 @@ package com.example.examsystem.controller.teachercontroller;
 import com.example.examsystem.base.result.PageTableRequest;
 import com.example.examsystem.base.result.Results;
 import com.example.examsystem.bean.Question;
+import com.example.examsystem.bean.Teacher;
 import com.example.examsystem.dto.TopicDto;
 import com.example.examsystem.service.teacher.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,34 +31,35 @@ public class TopicController
 
 	@ResponseBody
 	@RequestMapping("/chooseList")
-	public Results<TopicDto> chooseTopicList(PageTableRequest request)
+	public Results<TopicDto> chooseTopicList(PageTableRequest request, String sid)
 	{
 		request.countOffset();
-		return topicService.chooseTopicListByPage(request.getOffset(), request.getLimit());
+		return topicService.chooseTopicListByPage(request.getOffset(), request.getLimit(), sid);
 	}
+
 
 	@ResponseBody
 	@RequestMapping("/blankList")
-	public Results<TopicDto> blankTopicList(PageTableRequest request)
+	public Results<TopicDto> blankTopicList(PageTableRequest request, String sid)
 	{
 		request.countOffset();
-		return topicService.blankTopicListByPage(request.getOffset(), request.getLimit());
+		return topicService.blankTopicListByPage(request.getOffset(), request.getLimit(), sid);
 	}
 
 	@ResponseBody
 	@RequestMapping("/shortList")
-	public Results<TopicDto> shortTopicList(PageTableRequest request)
+	public Results<TopicDto> shortTopicList(PageTableRequest request, String sid)
 	{
 		request.countOffset();
-		return topicService.shortTopicListByPage(request.getOffset(), request.getLimit());
+		return topicService.shortTopicListByPage(request.getOffset(), request.getLimit(), sid);
 	}
 
 	@ResponseBody
 	@RequestMapping("/judgeList")
-	public Results<TopicDto> judgeTopicList(PageTableRequest request)
+	public Results<TopicDto> judgeTopicList(PageTableRequest request, String sid)
 	{
 		request.countOffset();
-		return topicService.judgeTopicListByPage(request.getOffset(), request.getLimit());
+		return topicService.judgeTopicListByPage(request.getOffset(), request.getLimit(), sid);
 	}
 
 	@ResponseBody
@@ -434,9 +437,16 @@ public class TopicController
 		return msg;
 	}
 
+	@RequestMapping("/delete")
+	@ResponseBody
+	public String delete(String qid)
+	{
+		return topicService.delete(qid);
+	}
+
 
 	@RequestMapping("/html1")
-	public String getHtml1()
+	public String getHtml1(HttpSession httpSession)
 	{
 		return "teacher/choosetopicmanager";
 	}

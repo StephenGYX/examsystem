@@ -11,29 +11,29 @@ import java.util.logging.Level;
 public interface TopicDao
 {
 
-	@Select("select count(*) from question where qtype=1")
-	Long countAllChooseTopic();
+	@Select("select count(*) from question where qtype=1 and sid=#{sid}")
+	Long countAllChooseTopic(String sid);
 
-	@Select("select * from question q,subject s where q.sid=s.sid and qtype=1 order by qtime desc limit #{startPosition},#{limit}")
-	List<TopicDto> getAllChooseTopicByPage(Integer startPosition, Integer limit);
+	@Select("select * from question q,subject s where q.sid=s.sid and qtype=1 and s.sid=#{sid} order by qtime desc limit #{startPosition},#{limit}")
+	List<TopicDto> getAllChooseTopicByPage(Integer startPosition, Integer limit, String sid);
 
-	@Select("select count(*) from question where qtype=3")
-	Long countAllBlankTopic();
+	@Select("select count(*) from question where qtype=3 and sid=#{sid}")
+	Long countAllBlankTopic(String sid);
 
-	@Select("select * from question q,subject s where q.sid=s.sid and qtype=3 order by qtime desc limit #{startPosition},#{limit}")
-	List<TopicDto> getAllBlankTopicByPage(Integer startPosition, Integer limit);
+	@Select("select * from question q,subject s where q.sid=s.sid and qtype=3 and q.sid=#{sid} order by qtime desc limit #{startPosition},#{limit}")
+	List<TopicDto> getAllBlankTopicByPage(Integer startPosition, Integer limit, String sid);
 
-	@Select("select count(*) from question where qtype=4")
-	Long countAllShortTopic();
+	@Select("select count(*) from question where qtype=4 and sid=#{sid}")
+	Long countAllShortTopic(String sid);
 
-	@Select("select * from question q,subject s where q.sid=s.sid and qtype=4 order by qtime desc limit #{startPosition},#{limit}")
-	List<TopicDto> getAllShortTopicByPage(Integer startPosition, Integer limit);
+	@Select("select * from question q,subject s where q.sid=s.sid and qtype=4 and s.sid=#{sid} order by qtime desc limit #{startPosition},#{limit}")
+	List<TopicDto> getAllShortTopicByPage(Integer startPosition, Integer limit, String sid);
 
-	@Select("select count(*) from question where qtype=2")
-	Long countAllJudgeTopic();
+	@Select("select count(*) from question where qtype=2 and sid=#{sid}")
+	Long countAllJudgeTopic(String sid);
 
-	@Select("select * from question q,subject s where q.sid=s.sid and qtype=2 order by qtime desc limit #{startPosition},#{limit}")
-	List<TopicDto> getAllJudgeTopicByPage(Integer startPosition, Integer limit);
+	@Select("select * from question q,subject s where q.sid=s.sid and qtype=2 and s.sid=#{sid} order by qtime desc limit #{startPosition},#{limit}")
+	List<TopicDto> getAllJudgeTopicByPage(Integer startPosition, Integer limit, String sid);
 
 	@Select("select count(*) from question where title=#{titles} and sid=#{sid}")
 	int blankTitleQuery(String titles, String sid);
@@ -61,4 +61,10 @@ public interface TopicDao
 
 	@Update("update question set sid=#{question.sid},title=#{question.title},option1=#{question.option1},option2=#{question.option2},option3=#{question.option3},option4=#{question.option4},correct=#{question.correct} where qid=#{question.qid}")
 	int topicUpdate(@Param("question") Question question);
+
+	@Select("select count(*) from examquestion where qid=#{qid}")
+	int deleteQuery(String qid);
+
+	@Delete("delete from question where qid=#{qid}")
+	void delete(String qid);
 }

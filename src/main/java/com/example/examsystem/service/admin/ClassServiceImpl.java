@@ -1,7 +1,6 @@
 package com.example.examsystem.service.admin;
 
 import com.example.examsystem.bean.ClassInfo;
-import com.example.examsystem.bean.Subject;
 import com.example.examsystem.bean.TableModel;
 import com.example.examsystem.dao.ClassDao;
 import com.google.gson.Gson;

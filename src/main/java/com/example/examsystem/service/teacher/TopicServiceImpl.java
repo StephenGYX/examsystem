@@ -28,29 +28,29 @@ public class TopicServiceImpl implements TopicService
 	TopicDao topicDao;
 
 	@Override
-	public Results<TopicDto> chooseTopicListByPage(Integer startPosition, Integer limit)
+	public Results<TopicDto> chooseTopicListByPage(Integer startPosition, Integer limit, String sid)
 	{
-		return Results.success(topicDao.countAllChooseTopic().intValue(), topicDao.getAllChooseTopicByPage(startPosition, limit));
+		return Results.success(topicDao.countAllChooseTopic(sid).intValue(), topicDao.getAllChooseTopicByPage(startPosition, limit, sid));
 	}
 
 	@Override
-	public Results<TopicDto> blankTopicListByPage(Integer startPosition, Integer limit)
+	public Results<TopicDto> blankTopicListByPage(Integer startPosition, Integer limit, String sid)
 	{
-		return Results.success(topicDao.countAllBlankTopic().intValue(), topicDao.getAllBlankTopicByPage(startPosition, limit));
-
-	}
-
-	@Override
-	public Results<TopicDto> shortTopicListByPage(Integer startPosition, Integer limit)
-	{
-		return Results.success(topicDao.countAllShortTopic().intValue(), topicDao.getAllShortTopicByPage(startPosition, limit));
+		return Results.success(topicDao.countAllBlankTopic(sid).intValue(), topicDao.getAllBlankTopicByPage(startPosition, limit, sid));
 
 	}
 
 	@Override
-	public Results<TopicDto> judgeTopicListByPage(Integer startPosition, Integer limit)
+	public Results<TopicDto> shortTopicListByPage(Integer startPosition, Integer limit, String sid)
 	{
-		return Results.success(topicDao.countAllJudgeTopic().intValue(), topicDao.getAllJudgeTopicByPage(startPosition, limit));
+		return Results.success(topicDao.countAllShortTopic(sid).intValue(), topicDao.getAllShortTopicByPage(startPosition, limit, sid));
+
+	}
+
+	@Override
+	public Results<TopicDto> judgeTopicListByPage(Integer startPosition, Integer limit, String sid)
+	{
+		return Results.success(topicDao.countAllJudgeTopic(sid).intValue(), topicDao.getAllJudgeTopicByPage(startPosition, limit, sid));
 	}
 
 	@Override
@@ -164,6 +164,20 @@ public class TopicServiceImpl implements TopicService
 	public int topicUpdate(Question question)
 	{
 		return topicDao.topicUpdate(question);
+	}
+
+	@Override
+	public String delete(String qid)
+	{
+		String back = "e";
+		int index = topicDao.deleteQuery(qid);
+		if (index <= 0)
+		{
+			topicDao.delete(qid);
+			back = "s";
+		}
+
+		return back;
 	}
 
 	@Override
