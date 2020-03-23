@@ -100,6 +100,8 @@
             , response: {
                 dataName: 'datas' //规定数据列表的字段名称，默认：data
             }
+            , limits: [5]
+            , limit: 5
             , cols: [
                 [ //表头
 
@@ -166,8 +168,9 @@
                     for (var i = 0; i < result.length; i++) {
 
                         $('#addbox').append('<input type="checkbox"  name="tsubject" value="' + result[i].sid + '" title="' + result[i].sname + '">');
-                        form.render();
+
                     }
+                    form.render();
                 }
             });
 

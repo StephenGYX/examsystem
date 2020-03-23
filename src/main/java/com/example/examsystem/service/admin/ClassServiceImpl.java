@@ -66,4 +66,10 @@ public class ClassServiceImpl implements ClassService
 
 		return str;
 	}
+
+	@Override
+	public String getClassAll() {
+		List<ClassInfo> list = classDao.getClassAll();
+		return new Gson().toJson(list);
+	}
 }

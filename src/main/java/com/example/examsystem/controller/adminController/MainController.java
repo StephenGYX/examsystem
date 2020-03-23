@@ -2,10 +2,9 @@ package com.example.examsystem.controller.adminController;
 
 import com.example.examsystem.base.result.PageTableRequest;
 import com.example.examsystem.base.result.Results;
+import com.example.examsystem.bean.Student;
 import com.example.examsystem.bean.Teacher;
-import com.example.examsystem.service.admin.LoginService;
-import com.example.examsystem.service.admin.SubService;
-import com.example.examsystem.service.admin.TeacherService;
+import com.example.examsystem.service.admin.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +25,12 @@ public class MainController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private ClassService classService;
 
     @RequestMapping(value = "/main")
     public ModelAndView main(HttpSession session) {
@@ -60,32 +65,74 @@ public class MainController {
         return teacherService.teacher(pageTableRequest);
     }
 
+    /**
+     * 删除教师
+     * @param teacher
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/delTeacher")
     public String delTeacher(Teacher teacher) {
         return teacherService.delTeacher(teacher);
     }
 
+    /**
+     * 添加教师
+     * @param teacher
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/addTeacher")
     public String addTeacher(Teacher teacher) {
         return teacherService.addTeacher(teacher);
     }
 
-    @RequestMapping(value = "/html1")
-    public String getClass1() {
-        return "admin/class";
+    /**
+     * 学生表
+     * @param pageTableRequest
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/student")
+    public Results<Student> student(PageTableRequest pageTableRequest) {
+        return studentService.student(pageTableRequest);
     }
+
+    /**
+     * 获取班级
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getClass")
+    public String getClassList() {
+        return classService.getClassAll();
+    }
+
+
+    /**
+     * 添加学生
+     * @param student
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/addStudent")
+    public String addStudent(Student student) {
+        return studentService.addStudent(student);
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/delStudent")
+    public String delStudent(Student student) {
+        return studentService.delStudent(student);
+    }
+
 
     @RequestMapping(value = "/html2")
     public String getStudent() {
         return "admin/student";
     }
 
-    @RequestMapping(value = "/html3")
-    public String getSubject() {
-        return "admin/subject";
-    }
 
     @RequestMapping(value = "/html4")
     public String getTeacher() {

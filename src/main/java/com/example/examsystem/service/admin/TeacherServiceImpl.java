@@ -26,8 +26,7 @@ public class TeacherServiceImpl implements TeacherService{
         String result = "false";
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.setAccount(teacher.getTaccount());
-        System.out.println("有无："+loginDao.findTeacher(loginInfo));
-        System.out.println(teacher.getTsubject().length);
+
         if (loginDao.findTeacher(loginInfo) == null){
             if (teacherDao.addTeacher(teacher) > 0){
                 Teacher teacher1 = loginDao.findTeacher(loginInfo);
