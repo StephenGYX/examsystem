@@ -11,6 +11,7 @@
     <script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body>
+<input type="hidden" id="subject" th:value="${session.list.get(0).getSid()}">
 <div class="layui-fluid">
     <div class="layui-row  layui-col-space15">
         <div class="layui-col-md12">
@@ -18,11 +19,12 @@
                 <div class="layui-card-body ">
                     <form class="layui-form  layui-col-space5">
                         <div class="layui-input-inline">
-                            <select name="verifyState" lay-filter="verifyState">
-                                <option value="">请选择科目</option>
-                                <option value="已审核">已审核</option>
-                                <option value="待审核">待审核</option>
-                                <option value="未过审">未过审</option>
+                            <select name="subject" lay-filter="verifyState">
+                                <div th:each="subject:${session.list}">
+                                    <option th:value="${subject.getSid()}"><span
+                                            th:text="${subject.getSname()}"></span>
+                                    </option>
+                                </div>
                             </select>
                         </div>
 
@@ -77,10 +79,9 @@
         <br>
         <div class="layui-input-inline">
             <select id="sid" lay-filter="verifyState">
-                <option value="">请选择科目</option>
-                <option value="1">JAVA</option>
-                <option value="2">C++</option>
-                <option value="3">PYTHON</option>
+                <div th:each="subject:${session.list}">
+                    <option th:value="${subject.getSid()}"><span th:text="${subject.getSname()}"></span></option>
+                </div>
             </select>
         </div>
         <br><br><br>
@@ -183,7 +184,6 @@
 		rcverify(0);
 		var titles = $("#titles").val();
 		var sid = $("#sid option:selected").val();
-		alert(sid);
 		titles = titles.replace(/^\s+|\s+$/g, "");
 		if (verify1 === 1) {
 			layer.msg("新增输入长度不合法", {icon: 2});
@@ -195,7 +195,7 @@
 				url: '/topic/blankAdd',
 				data: {"titles": titles, "sid": sid},
 				success: function (msg) {
-					if (msg === "success") {
+					if (msg == "success") {
 
 						$(".layui-laypage-btn")[0].click();
 						layer.close(opAdd);
@@ -211,17 +211,20 @@
 
 
 	layui.use('table', function () {
+		var sid = $('#subject').val();
 		var table = layui.table,
 			form = layui.form;
 		table.render({
 			elem: '#topic'
-			, url: '/topic/blankList' //数据接口
+			, url: '/topic/blankList?sid=' + sid //数据接口
 			, page: true //开启分页
 			, cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-			, response: {
-				dataName: 'datas' //规定数据列表的字段名称，默认：data
-			}
-			, cols: [
+			, response:
+				{
+					dataName: 'datas' //规定数据列表的字段名称，默认：data
+				}
+			,
+			cols: [
 				[ //表头
 					{type: 'checkbox', fixed: 'left'},
 					{title: '序号', type: 'numbers'}
@@ -231,7 +234,8 @@
 					, {title: '操作', toolbar: '#barDemo', align: 'center'}
 				]
 			]
-		});
+		})
+		;
 
 
 		//监听工具条
@@ -239,23 +243,25 @@
 			var data = obj.data;//获取点击行数据
 			if (obj.event === 'del') {
 				layer.confirm('确认删除该题目吗?', function (index) {
-					if (data.nstatus === '未过审') {
-						$.ajax({
-							url: "/api-back/need/delete",
-							type: "GET",
-							data: {nid: data.nid},
-							dataType: 'json',
-							success: function (result) {
+					$.ajax({
+						url: "/topic/delete",
+						type: "GET",
+						data: {
+							qid: data.qid
+						},
+						dataType: 'text',
+						success: function (result) {
+							if (result == 's') {
 								layer.alert("删除成功", {icon: 1}, function (index1) {
 									layer.close(index1);
-									table.reload('need');
-
+									table.reload('topic');
 								});
+							} else {
+								layer.alert("删除失败，已有试卷在使用该题", {icon: 2})
 							}
-						});
-					} else {
-						layer.msg('只有未过审的需求才可以删除，请确认！', {icon: 2});
-					}
+
+						}
+					});
 				});
 			}
 		});
@@ -264,15 +270,11 @@
 		form.on('submit(search)', function (data) {
 			var data = data.field;
 			table.render({
-				elem: '#need'
-				, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
+				elem: '#topic'
+				, url: '/topic/blankList?sid=' + data.subject //数据接口
 				, page: true //开启分页
 				, where: {
-					"ntitle": data.ntitle,
-					"verifyState": data.verifyState,
-					"tenderState": data.tenderState,
-					"startTime": data.startDate,
-					"endTime": data.endDate
+					sid: data.subject
 				}
 				, response: {
 					countName: 'count', //规定数据总数的字段名称，默认：count

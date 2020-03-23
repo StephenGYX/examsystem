@@ -11,6 +11,7 @@
     <script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body>
+<input type="hidden" id="subject" th:value="${session.list.get(0).getSid()}">
 <div class="layui-fluid">
     <div class="layui-row  layui-col-space15">
         <div class="layui-col-md12">
@@ -18,11 +19,11 @@
                 <div class="layui-card-body ">
                     <form class="layui-form  layui-col-space5">
                         <div class="layui-input-inline">
-                            <select name="verifyState" lay-filter="verifyState">
-                                <option value="">请选择科目</option>
-                                <option value="已审核">已审核</option>
-                                <option value="待审核">待审核</option>
-                                <option value="未过审">未过审</option>
+                            <select name="subject" lay-filter="verifyState">
+                                <div th:each="subject:${session.list}">
+                                    <option th:value="${subject.getSid()}"><span th:text="${subject.getSname()}"></span>
+                                    </option>
+                                </div>
                             </select>
                         </div>
 
@@ -59,7 +60,7 @@
 
                 <div class="layui-card-body ">
                     <script type="text/html" id="barDemo">
-                        <a class="layui-btn layui-btn layui-btn-xs" lay-event="update">修改</a>
+                        <!--                        <a class="layui-btn layui-btn layui-btn-xs" lay-event="update">修改</a>-->
                         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
                     </script>
                 </div>
@@ -105,10 +106,9 @@
         <br>
         <div class="layui-input-inline">
             <select id="sid" lay-filter="verifyState">
-                <option value="">请选择科目</option>
-                <option value="1">JAVA</option>
-                <option value="2">C++</option>
-                <option value="3">PYTHON</option>
+                <div th:each="subject:${session.list}">
+                    <option th:value="${subject.getSid()}"><span th:text="${subject.getSname()}"></span></option>
+                </div>
             </select>
         </div>
         <br><br><br>
@@ -164,10 +164,9 @@
         <br>
         <div class="layui-input-inline">
             <select id="ssid" lay-filter="verifyState">
-                <option value="">请选择科目</option>
-                <option value="1">JAVA</option>
-                <option value="2">C++</option>
-                <option value="3">PYTHON</option>
+                <div th:each="subject:${session.list}">
+                    <option th:value="${subject.getSid()}"><span th:text="${subject.getSname()}"></span></option>
+                </div>
             </select>
         </div>
         <br><br><br>
@@ -236,7 +235,7 @@
 					"qid": qid
 				},
 				success: function (msg) {
-					if (msg === "success") {
+					if (msg == "success") {
 						$(".layui-laypage-btn")[0].click();
 						layer.close(opAdd);
 						layer.alert("修改成功", {icon: 1});
@@ -290,11 +289,12 @@
 
 
 	layui.use('table', function () {
+		var sid = $('#subject').val();
 		var table = layui.table,
 			form = layui.form;
 		table.render({
 			elem: '#topic'
-			, url: '/topic/chooseList' //数据接口
+			, url: '/topic/chooseList?sid=' + sid //数据接口
 			, page: true //开启分页
 			, cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
 			, response: {
@@ -323,23 +323,25 @@
 			var data = obj.data;//获取点击行数据
 			if (obj.event === 'del') {
 				layer.confirm('确认删除该题目吗?', function (index) {
-					if (data.nstatus === '未过审') {
-						$.ajax({
-							url: "/api-back/need/delete",
-							type: "GET",
-							data: {nid: data.nid},
-							dataType: 'json',
-							success: function (result) {
+					$.ajax({
+						url: "/topic/delete",
+						type: "GET",
+						data: {
+							qid: data.qid
+						},
+						dataType: 'text',
+						success: function (result) {
+							if (result == 's') {
 								layer.alert("删除成功", {icon: 1}, function (index1) {
 									layer.close(index1);
-									table.reload('need');
-
+									table.reload('topic');
 								});
+							} else {
+								layer.alert("删除失败，已有试卷在使用该题", {icon: 2})
 							}
-						});
-					} else {
-						layer.msg('只有未过审的需求才可以删除，请确认！', {icon: 2});
-					}
+
+						}
+					});
 				});
 			} else if (obj.event === 'update') {
 				opAdd = layer.open({
@@ -364,15 +366,11 @@
 		form.on('submit(search)', function (data) {
 			var data = data.field;
 			table.render({
-				elem: '#need'
-				, url: '/api-back/need/findNeedByFuzzyNeedTitle' //数据接口
+				elem: '#topic'
+				, url: '/topic/chooseList?sid=' + data.subject //数据接口
 				, page: true //开启分页
 				, where: {
-					"ntitle": data.ntitle,
-					"verifyState": data.verifyState,
-					"tenderState": data.tenderState,
-					"startTime": data.startDate,
-					"endTime": data.endDate
+					sid: data.subject
 				}
 				, response: {
 					countName: 'count', //规定数据总数的字段名称，默认：count
@@ -381,9 +379,14 @@
 				, cols: [
 					[ //表头
 						{type: 'checkbox', fixed: 'left'},
-						{title: '序号', type: 'numbers'}
+						{title: '序号', type: 'numbers', width: '5%'}
 						, {field: 'sname', title: '科目', align: 'center'}
 						, {field: 'title', title: '题目名', align: 'center'}
+						, {field: 'option1', title: '选项一', align: 'center'}
+						, {field: 'option2', title: '选项二', align: 'center'}
+						, {field: 'option3', title: '选项三', align: 'center'}
+						, {field: 'option4', title: '选项四', align: 'center'}
+						, {field: 'correct', title: '正确选项', align: 'center'}
 						, {field: 'qtime', title: '生成时间', align: 'center'}
 						, {title: '操作', toolbar: '#barDemo', align: 'center'}
 					]
