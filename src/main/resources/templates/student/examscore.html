@@ -102,23 +102,34 @@
 			, success: function (res) {
 				if (res === 'error') {
 					layer.alert('考生当前未登录，请先进行登录', {icon: 5});
-					window.location.href = '#';
-				} else {
+					window.location.href = '/studentexam/tologin';
+				}
+				// else if (res.ssex === 'getOnline') {
+				// 	document.getElementById("sname").innerText = res.sname;
+				// 	document.getElementById("saccount").innerText = res.saccount;
+				// 	account = res.saccount;
+				// 	name = res.sname;
+				// 	layer.msg('老师批改后可以进行成绩查询', {icon: 6});
+				// }
+				else {
 					document.getElementById("sname").innerText=res.sname;
 					document.getElementById("saccount").innerText=res.saccount;
 					account=res.saccount;
 					name=res.sname;
 					$.ajax({
 						type: "get",
-						url: '/studentscore/searchType',
+						url: '/examscore/searchType',
 						data: {},
 						success: function (msg) {
 							$("#subjectType").empty();
 							if (msg.length >0 ) {
 								$("#subjectType").append(new Option("---科目类型---", ""));
-								$.each(msg, function (index, item) {
-									$("#subjectType").append(new Option(item, item));
-								});
+								// $.each(msg, function (index, item) {
+								// 	$("#subjectType").append(new Option(item, item));
+								// });
+								for (var i = 0; i < msg.length; i++) {
+									$("#subjectType").append(new Option(msg[i].sname, msg[i].sid))
+								}
 							} else {
 								$("#subjectType").append(new Option("暂无数据", ""));
 							}
