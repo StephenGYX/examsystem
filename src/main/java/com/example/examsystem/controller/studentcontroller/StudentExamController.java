@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 这是考试页面的控制层
@@ -56,6 +57,13 @@ public class StudentExamController
 		{
 			student=new Student();
 			student.setSsex("error");
+		}else
+		{
+			String res=studentExamServiceImpl.getOnline(session);
+			if (res.equals("success"))
+			{
+				student.setSsex("getOnline");
+			}
 		}
 		return student;
 	}
@@ -87,6 +95,8 @@ public class StudentExamController
 	 * @return
 	 */
 	@PostMapping("/doexam")
-	public void doexam(){
+	@ResponseBody
+	public String doexam(HttpServletRequest request){
+		return studentExamServiceImpl.doexam(request);
 	}
 }

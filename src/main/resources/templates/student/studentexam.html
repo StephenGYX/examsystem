@@ -11,7 +11,7 @@
 	<script th:src="@{/layuires/static/js/}"></script>
 	<script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
-<body class="lay-blog">
+<body class="lay-blog" id="exambody">
 		<div class="header">
 			<div class="header-wrap">
 				<h1 class="logo pull-left">
@@ -40,6 +40,7 @@
 			</div>
 		</div>
 		<div class="container-wrap">
+			<div style=" position: fixed;bottom: 1;"><i id="dtime" style="font-size: 15px;color: red"></i></div>
 			<div class="container">
 				<div class="contar-wrap" style="width: 1000px;margin-left: -15%;">
 					<div class="item" style="width: 1000px">
@@ -63,6 +64,7 @@
 <script>
 	var account;
 	var name;
+	var maxtime;
 	$(function () {
 		$.ajax({
 			type: 'GET'
@@ -72,12 +74,6 @@
 				if (res.ssex === 'error') {
 					layer.alert('考生当前未登录，请先进行登录', {icon: 5});
 					window.location.href = '/studentexam/tologin';
-				} else if (res.ssex === 'online') {
-					document.getElementById("sname").innerText = res.sname;
-					document.getElementById("saccount").innerText = res.saccount;
-					account = res.saccount;
-					name = res.sname;
-					layer.alert('考卷等老师批改后可以进行成绩查询', {icon: 6});
 				} else {
 					document.getElementById("sname").innerText = res.sname;
 					document.getElementById("saccount").innerText = res.saccount;
@@ -109,11 +105,31 @@
 			if (!validate_all()) {
 				return false;
 			} else {
-				window.onbeforeunload=null;
+				submitexam();
 			}
-
+			return false;
 		});
 	});
+
+	function submitexam() {
+		window.onbeforeunload=null;
+		$.ajax({
+			url:'/studentexam/doexam'
+			,type:'post'
+			,data:$("#questionForm").serialize()
+			,success:function (res) {
+				if (res === "success") {
+					layer.msg("考试结束，请等待老师批改后可在成绩查询", {icon: 6});
+					window.location.href="/examscore/scoremain";
+				} else {
+					layer.msg('考卷提交失败，请重新提交',{icon:5})
+				}
+			}
+			,error:function () {
+				layer.msg('考卷提交失败，请重新提交',{icon:5})
+			}
+		})
+	}
 
 	function validate_all(){
 		var count=0;
@@ -170,12 +186,11 @@
 
 	//提交考试码开始考试
 	function examnum() {
-		layer.prompt({title: '请输入考试码，并确认', area: ['300px', '20px'], formType: 2,btn:['开始考试']}, function(text, index) {
+		layer.prompt({title: '请输入考试码，并确认', area: ['300px', '20px'], formType: 3,btn:['开始考试'],cancel:function () {
+				window.location.href="/examscore/scoremain";
+			}}, function(text, index) {
 			text = text.trim();
 			if (text.length > 0 && text.length <= 15) {
-				window.onbeforeunload = function(e) {
-					e.returnValue ="确定要离开本界面吗";
-				};
 				$.ajax({
 					url:'/studentexam/examnum'
 					,type:'post'
@@ -183,24 +198,30 @@
 					,success:function (res) {
 						if (res[0].qtime === 'error') {
 							layer.msg('该考试码不在当前考试时间段', {icon: 5});
-						} else {
-							$("#questionDiv").append("<form class='layui-form' method='post' action='/studentexam/doexam' lay-filter='example' id='questionForm'></form>");
+						} else if (res[0].qtime === 'online') {
+							layer.msg('你已做完该考试码的考卷，请待老师批改后再查看成绩', {icon: 6});
+						} else if (res.length > 0) {
+							dotime(res[0].correct);
+							window.onbeforeunload = function (e) {
+								e.returnValue = "确定要离开本界面吗";
+							};
+							$("#questionDiv").append("<form class='layui-form' lay-filter='example' id='questionForm'></form>");
 							for (var i = 0; i < res.length; i++) {
 								//1选择 2填空 3判断 4简答
-								if (res[i].qtype===1) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='"+res[i].qid+"' title='A、"+res[i].option1+"' type='radio' value='"+res[i].option1+"' ><input name='"+res[i].qid+"' title='B、"+res[i].option2+"' type='radio' value='"+res[i].option2+"' ><input name='"+res[i].qid+"' title='C、"+res[i].option3+"' type='radio' value='"+res[i].option3+"' ><input name='"+res[i].qid+"' title='D、"+res[i].option4+"' type='radio' value='"+res[i].option4+"' ></div></div>")
-								} else if (res[i].qtype===2) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='"+res[i].qid+"' class='layui-input' type='text' placeholder='请输入答案' autocomplete='off' lay-verify='title'></div></div>")
-								} else if (res[i].qtype===3) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='"+res[i].qid+"' title='"+res[i].option1+"' type='radio' value='"+res[i].option1+"' ><input name='"+res[i].qid+"' title='"+res[i].option2+"' type='radio' value='"+res[i].option2+"' ></div></div>")
-								} else if (res[i].qtype===4) {
-									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>"+(i+1)+"、"+res[i].title+"</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><textarea name='"+res[i].qid+"' class='layui-textarea'  placeholder='请输入简答' autocomplete='off' lay-verify='title'></textarea></div></div>")
+								if (res[i].qtype === 1) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' title='A、" + res[i].option1 + "' type='radio' value='" + res[i].option1 + "' ><input name='" + res[i].qid + "' title='B、" + res[i].option2 + "' type='radio' value='" + res[i].option2 + "' ><input name='" + res[i].qid + "' title='C、" + res[i].option3 + "' type='radio' value='" + res[i].option3 + "' ><input name='" + res[i].qid + "' title='D、" + res[i].option4 + "' type='radio' value='" + res[i].option4 + "' ><input name='" + res[i].qid + "' type='text' value='未选择' style='display: none'></div></div>")
+								} else if (res[i].qtype === 2) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' class='layui-input' type='text' placeholder='请输入答案' autocomplete='off' lay-verify='title'></div></div>")
+								} else if (res[i].qtype === 3) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><input name='" + res[i].qid + "' title='" + res[i].option1 + "' type='radio' value='" + res[i].option1 + "' ><input name='" + res[i].qid + "' title='" + res[i].option2 + "' type='radio' value='" + res[i].option2 + "' ><input name='" + res[i].qid + "'  type='text' value='未选择' style='display: none'></div></div>")
+								} else if (res[i].qtype === 4) {
+									$("#questionForm").append("<div class='layui-form-item'><label class='layui-form-label-col' style='margin-left: 50px'>" + (i + 1) + "、" + res[i].title + "</label><label class='layui-form-label'>答案：</label><div class='layui-input-block'><textarea name='" + res[i].qid + "' class='layui-textarea'  placeholder='请输入简答' autocomplete='off' lay-verify='title'></textarea></div></div>")
 								}
 							}
-							$("#questionForm").append("<div class='layui-form-item'><div class='layui-input-block'><button class='layui-btn' type='submit' lay-filter='demo1' lay-submit=''>立即提交</button></div></div>")
+							$("#questionForm").append("<div class='layui-form-item'><div class='layui-input-block'><button class='layui-btn' type='submit' lay-filter='demo1' lay-submit=''>立即提交</button></div></div>");
+							layui.form.render();
+							layer.close(index);
 						}
-						layui.form.render();
-						layer.close(index);
 					}
 					,error:function () {
 						layer.msg('连接超时，请稍后重试')
@@ -210,6 +231,28 @@
 			}
 		});
 	}
+
+	function dotime(times) {
+		maxtime = times * 60 * 60 ; //一个小时，按秒计算，自己调整!
+		timer = setInterval("CountDown()", 1000);
+	}
+
+	function CountDown() {
+		if (maxtime >= 0) {
+			var minutes = Math.floor(maxtime / 60);
+			var seconds = Math.floor(maxtime % 60);
+			var msg = "距离考试结束还有：" + minutes + "分" + seconds + "秒";
+			document.getElementById("dtime").innerText=msg;
+			if (maxtime === (5 * 60))
+				layer.msg("还剩5分钟",{icon:6});
+			--maxtime;
+		} else{
+			clearInterval(timer);
+			layer.alert("考试结束",{icon:6});
+			submitexam();
+		}
+	}
+
 </script>
 
 </html>

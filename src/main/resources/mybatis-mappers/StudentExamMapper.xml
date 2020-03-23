@@ -12,4 +12,15 @@
     <select id="reviewExam" parameterType="java.lang.String" resultType="int">
         select count(*) from studentexam where eid in(select eid from exam where ecode=#{ecode}) and sid=#{sid}
     </select>
+
+    <insert id="doexam" parameterType="java.util.List">
+        insert into answer(eid, qid, sid, answer) values 
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.eid},#{item.qid},#{item.sid},#{item.answer})
+        </foreach>
+    </insert>
+
+    <insert id="overexam" parameterType="java.lang.String">
+        insert into studentexam(eid, sid, starttime, endtime) value (#{eid},#{sid},#{start},#{end})
+    </insert>
 </mapper>
