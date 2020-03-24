@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+	<meta charset="UTF-8">
+	<title>试卷详情</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+	<link rel="stylesheet" th:href="@{/layuires/static/css/mian.css}">
+	<script th:src="@{/layuires/layui/layui.js}"></script>
+	<script th:src="@{/layuires/static/js/}"></script>
+	<script th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body >
+	<div id="questionDiv">
+
+	</div>
+	<script>
+		layui.use('layer',function () {
+			var layer=layui.layer;
+		})
+	</script>
+</body>
+
+<script>
+	$(function () {
+		$.ajax({
+			type:'get'
+			,url:'/examscore/details'
+			,data:{}
+			,success:function (res) {
+				for (var i = 0; i < res.length; i++) {
+					//1选择 2判断  3填空 4简答
+					if (res[i].qtype === 1) {
+						$("#questionDiv").append("<div style='padding-left: 50px;padding-right: 50px'><p>"+(i+1)+"、"+res[i].title+"</p><P>选项：A、"+res[i].option1+"&nbsp;&nbsp;&nbsp;&nbsp;B、"+res[i].option2+"&nbsp;&nbsp;&nbsp;&nbsp;C、"+res[i].option3+"&nbsp;&nbsp;&nbsp;&nbsp;D、"+res[i].option4+"&nbsp;&nbsp;&nbsp;&nbsp;你选择："+res[i].answer+"&nbsp;&nbsp;&nbsp;&nbsp;参考答案："+res[i].correct+"</P></div>")
+					} else if (res[i].qtype === 3) {
+						$("#questionDiv").append("<div style='padding-left: 50px;padding-right: 50px'><p>"+(i+1)+"、"+res[i].title+"</p><P>你填空："+res[i].answer+"&nbsp;&nbsp;参考答案："+res[i].correct+"</P></div>")
+					} else if (res[i].qtype === 2) {
+						$("#questionDiv").append("<div style='padding-left: 50px;padding-right: 50px'><p>"+(i+1)+"、"+res[i].title+"</p><P>你判断："+res[i].answer+"&nbsp;&nbsp;参考答案："+res[i].correct+"</P></div>")
+					} else if (res[i].qtype === 4) {
+						$("#questionDiv").append("<div style='padding-left: 50px;padding-right: 50px'><p>"+(i+1)+"、"+res[i].title+"</p><P>你做答："+res[i].answer+"&nbsp;&nbsp;参考答案："+res[i].correct+"</P></div>")
+					}
+				}
+			}
+			,error:function () {
+				layer.msg('连接服务器超时')
+			}
+		});
+
+	});
+
+
+</script>
+
+</html>

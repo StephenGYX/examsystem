@@ -142,7 +142,6 @@
 				[
 					{type:'numbers' ,align:'center',title:'序号'}
 					,{field:'eid', align:'center',title: '试卷id',style:'display:none;'}
-					,{field:'sid', align:'center',title: '学生id',style:'display:none;'}
 					,{field:'starttime', align:'center',title: '开始时间',width:150}
 					,{field:'endtime', title: '结束时间',width: 150,align:'center'}
 					,{field:'sname', align:'center',width: 150, title: '考试科目'}
@@ -162,33 +161,20 @@
 
 		});
 		$('table.layui-table thead tr th:eq(1)').addClass('layui-hide');//隐藏的曝光表id表头
-		$('table.layui-table thead tr th:eq(2)').addClass('layui-hide');//隐藏的曝光表id表头
 		//监听行工具事件
 		table.on('tool(testTable)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
 			var data = obj.data ,//获得当前行数据
 					layEvent = obj.event, //获得 lay-event 对应的值
-					eid=data.eid,
-					sid=data.sid;
+					eid=data.eid;
 			if (layEvent === 'details') {
-				$.ajax({
-					url:'/examscore/details',
-					type:"post",
-					data:{"eid":eid,"sid":sid},
-					success:function (msg) {
-						layer.open({
-							type: 1 //Page层类型
-							,area: ['600px', '500px']
-							,title: '查看订单详情'
-							,shade: 0.3 //遮罩透明度
-							,anim: 1 //0-6的动画形式，-1不开启
-							,content:
-									'<div style="padding:50px;font-size: 15px"><div><p>雇主名称：'+msg.uname+'&nbsp;(ID:'+msg.nuseraccount+')</p></div><br><div><p>订单标题：'+msg.ntitle+'</p></div><br><div><p>订单内容：'+msg.ncontent+'</p></div><br><div><p>订单要求：'+msg.ndemand+'</p></div><br><div><p>订单金额：'+msg.nmoney+'(CNY)</p></div><br><div><p>时间：'+msg.ostarttime+'-至-'+msg.oendtime+'</p></div><br><div><p style="color: red">申请原因：'+cause+'</p></div></div>'
-						});
-					},
-					error:function (msg) {
-						layer.msg('连接超时，请稍后重试')
-					}
-				})
+				layer.open({
+					type: 2 //Page层类型
+					,area: ['1000px', '600px']
+					,title: '考试详情'
+					,shade: 0.3 //遮罩透明度
+					,anim: 1 //0-6的动画形式，-1不开启
+					,content:'/examscore/opendetails?eid='+eid
+				});
 			}
 		});
 

@@ -51,7 +51,15 @@ public class StudentExamServiceImpl implements StudentExamService
 				String dostarttime=sd.format(new Date());
 				session.setAttribute("dostarttime",dostarttime);
 				list=studentExamDao.examQuestion(Integer.valueOf(exam.getEid()+""));
-				list.get(0).setCorrect(exam.getEduration());
+				if (list.size()>0)
+				{
+					list.get(0).setCorrect(exam.getEduration());
+				}else
+				{
+					Question q=new Question();
+					q.setQtime("notquestion");
+					list.add(q);
+				}
 			}else
 			{
 				Question q=new Question();

@@ -12,4 +12,9 @@
     <select id="testTableCount" parameterType="java.lang.String" resultType="int">
         select count(*) from (select s.eid,s.sid,s.starttime,s.endtime,s.score,e.tid,e.sid suid from studentexam s left join exam e on e.eid=s.eid where s.sid=#{sid}) se,teacher t,subject su where se.tid=t.tid and se.suid=su.sid;
     </select>
+
+    <select id="details" parameterType="java.lang.String" resultType="com.example.examsystem.dto.QuestionDto">
+        select q.*,a.answer from answer a left join question q on a.qid=q.qid where a.sid=#{sid} and a.eid=#{eid}
+    </select>
+
 </mapper>

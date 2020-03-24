@@ -6,10 +6,10 @@ import com.example.examsystem.bean.Student;
 import com.example.examsystem.bean.Subject;
 import com.example.examsystem.dao.StudentScoreDao;
 import com.example.examsystem.dto.ExamDto;
+import com.example.examsystem.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -43,5 +43,18 @@ public class ExamScoreServiceImpl implements ExamScoreService
 		request.countOffset();
 		Student student=(Student)session.getAttribute("student");
 		return Results.success(studentScoreDao.testTableCount(student.getSid()+""),studentScoreDao.testTable(student.getSid(),request.getOffset(),request.getLimit()));
+	}
+
+	/**
+	 * 查看试卷详情
+	 * @param eid
+	 * @param session
+	 * @return
+	 */
+	@Override
+	public List<QuestionDto> details(String eid, HttpSession session)
+	{
+		Student student=(Student)session.getAttribute("student");
+		return studentScoreDao.details(eid,student.getSid());
 	}
 }
