@@ -126,7 +126,7 @@
 			var score2 = [];
 			var eid = $('#eid').val();
 			var sid = $('#sid').val();
-			var score1 =parseInt( $('#score1').val());
+			var score1 = parseInt($('#score1').val());
 			score2 = $('.scoreTwo');
 			for (var i = 0; i < score2.length; i++) {
 				if ($(score2[i]).val() != null) {
@@ -134,28 +134,30 @@
 				}
 			}
 			finallyScore = score1 + finallyScore;
-			$.ajax({
-				url: "/topic/addScore",
-				type: "GET",
-				data: {
-					eid: eid,
-					sid: sid,
-					score: finallyScore
-				},
-				dataType: 'text',
-				success: function (index) {
-					alert(index);
-					layer.close(aoodd);
-					layer.alert("批改成功！");
-					table.reload('topic');
+			if (finallyScore <= 100) {
+				$.ajax({
+					url: "/topic/addScore",
+					type: "GET",
+					data: {
+						eid: eid,
+						sid: sid,
+						score: finallyScore
+					},
+					dataType: 'text',
+					success: function (index) {
+						layer.close(aoodd);
+						layer.alert("批改成功！");
+						table.reload('topic');
 
-				},
-				error: function () {
-					alert("dddd");
-					layer.close(aoodd);
-					layer.alert("您的网络有问题，提交失败！")
-				}
-			});
+					},
+					error: function () {
+						layer.close(aoodd);
+						layer.alert("您的网络有问题，提交失败！")
+					}
+				});
+			} else {
+				layer.alert("当前选择判断分值为：" + score1 + "分,总分现在是" + finallyScore + "分，超过总分100分，请修改评分！")
+			}
 			return false;
 		});
 	});
