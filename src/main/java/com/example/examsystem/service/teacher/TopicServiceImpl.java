@@ -2,6 +2,8 @@ package com.example.examsystem.service.teacher;
 
 import com.example.examsystem.base.result.Results;
 import com.example.examsystem.bean.Question;
+import com.example.examsystem.bean.StudentAnswer;
+import com.example.examsystem.bean.TeacherStuentExam;
 import com.example.examsystem.dao.TopicDao;
 import com.example.examsystem.dto.TopicDto;
 import jxl.Cell;
@@ -26,6 +28,32 @@ public class TopicServiceImpl implements TopicService
 
 	@Autowired
 	TopicDao topicDao;
+
+
+	@Override
+	public Results<TeacherStuentExam> examList(Integer startPosition, Integer limit, String tid)
+	{
+		return Results.success(topicDao.countAllExamList(tid).intValue(), topicDao.getAllExamListByPage(startPosition, limit, tid));
+	}
+
+	@Override
+	public List<StudentAnswer> getStudentAnswer(String eid, String studentId)
+	{
+		return topicDao.getStudentAnswer(eid, studentId);
+	}
+
+	@Override
+	public String addScore(String eid, String sid, String score)
+	{
+		String back = "e";
+		int index = topicDao.addScore(eid, sid, score);
+		if (index > 0)
+		{
+			back = "s";
+		}
+		return back;
+	}
+
 
 	@Override
 	public Results<TopicDto> chooseTopicListByPage(Integer startPosition, Integer limit, String sid)
@@ -179,6 +207,7 @@ public class TopicServiceImpl implements TopicService
 
 		return back;
 	}
+
 
 	@Override
 	public boolean bulkInsertJudge(MultipartFile file)
