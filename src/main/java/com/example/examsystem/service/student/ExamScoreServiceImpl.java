@@ -42,6 +42,11 @@ public class ExamScoreServiceImpl implements ExamScoreService
 	{
 		request.countOffset();
 		Student student=(Student)session.getAttribute("student");
+		if (student==null)
+		{
+			student=new Student();
+			student.setSid("0");
+		}
 		return Results.success(studentScoreDao.testTableCount(student.getSid()+""),studentScoreDao.testTable(student.getSid(),request.getOffset(),request.getLimit()));
 	}
 
