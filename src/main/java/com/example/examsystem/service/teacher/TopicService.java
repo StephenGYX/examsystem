@@ -2,8 +2,12 @@ package com.example.examsystem.service.teacher;
 
 import com.example.examsystem.base.result.Results;
 import com.example.examsystem.bean.Question;
+import com.example.examsystem.bean.StudentAnswer;
+import com.example.examsystem.bean.TeacherStuentExam;
 import com.example.examsystem.dto.TopicDto;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface TopicService
 {
@@ -34,4 +38,10 @@ public interface TopicService
 	int topicUpdate(Question question);
 
 	String delete(String qid);
+
+	Results<TeacherStuentExam> examList(Integer offset, Integer limit, String tid);
+
+	List<StudentAnswer> getStudentAnswer(String eid, String studentId);
+
+	String addScore(String eid, String sid, String score);
 }

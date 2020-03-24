@@ -3,7 +3,9 @@ package com.example.examsystem.controller.teachercontroller;
 import com.example.examsystem.base.result.PageTableRequest;
 import com.example.examsystem.base.result.Results;
 import com.example.examsystem.bean.Question;
+import com.example.examsystem.bean.StudentAnswer;
 import com.example.examsystem.bean.Teacher;
+import com.example.examsystem.bean.TeacherStuentExam;
 import com.example.examsystem.dto.TopicDto;
 import com.example.examsystem.service.teacher.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -467,5 +470,35 @@ public class TopicController
 	public String getHtml4()
 	{
 		return "teacher/shorttopicmanager";
+	}
+
+	@RequestMapping("/html5")
+	public String getHtml5()
+	{
+		return "teacher/testpapermanager";
+	}
+
+
+	@ResponseBody
+	@RequestMapping("/examList")
+	public Results<TeacherStuentExam> examList(PageTableRequest request, String tid)
+	{
+		request.countOffset();
+		return topicService.examList(request.getOffset(), request.getLimit(), tid);
+	}
+
+	@ResponseBody
+	@RequestMapping("/getStudentAnswer")
+	public List<StudentAnswer> getStudentAnswer(String eid, String studentId)
+	{
+		return topicService.getStudentAnswer(eid, studentId);
+	}
+
+	@ResponseBody
+	@RequestMapping("/addScore")
+	public String addScore(String eid, String sid, String score)
+	{
+		System.out.println(score);
+		return topicService.addScore(eid, sid, score);
 	}
 }
