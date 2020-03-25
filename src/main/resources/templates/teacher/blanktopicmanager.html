@@ -96,6 +96,11 @@
         <div>
             <h1>填空题模板导入注意-Warning</h1>
             <h3>请先下载预先设定好的模板，然后按格式导入模板，切勿随机修改模板，将会导致导入失败或导入错误的模板导致题库出现问题！</h3>
+            <div th:each="subject:${session.list}">
+                <div style="color: red">
+                    <span>sid对应科目:</span><span th:text="${subject.getSid()}"></span><span>=</span><span th:text="${subject.getSname()}"></span><br>
+                </div>
+            </div>
         </div>
     </div>
 </script>

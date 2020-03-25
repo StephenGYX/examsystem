@@ -123,6 +123,12 @@
         <div>
             <h1>选择题模板导入注意-Warning</h1>
             <h3>请先下载预先设定好的模板，然后按格式导入模板，切勿随机修改模板，将会导致导入失败或导入错误的模板导致题库出现问题！</h3>
+            <div th:each="subject:${session.list}">
+                <div style="color: red">
+                    <span>sid对应科目:</span><span th:text="${subject.getSid()}"></span><span>=</span><span
+                        th:text="${subject.getSname()}"></span><br>
+                </div>
+            </div>
         </div>
     </div>
 </script>
@@ -275,11 +281,11 @@
 				success: function (msg) {
 					if (msg === "success") {
 
-						$(".layui-laypage-btn")[0].click();
 						layer.close(opAdd);
-						layer.alert("添加成功", {icon: 1});
+						location.reload();
+						alert("添加成功");
 					} else {
-						layer.msg("已有相同标题的题目，请重新输入", {icon: 2});
+						alert("已有相同标题的题目，请重新输入");
 						document.getElementById("tt").innerText = "已有相同标题的题目，请重新输入"
 					}
 				}
