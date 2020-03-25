@@ -1,6 +1,7 @@
 package com.example.examsystem.dao;
 
 import com.example.examsystem.bean.Exam;
+import com.example.examsystem.bean.Question;
 import com.example.examsystem.bean.Subject;
 import org.apache.ibatis.annotations.*;
 
@@ -49,4 +50,7 @@ public interface ExamQuestionDao
 
 	@Delete("DELETE FROM examquestion WHERE eid=#{eid}")
 	public abstract int deleteAll(Long eid);
+
+	@Select("SELECT title,qtype,qid FROM question WHERE sid=#{sid}")
+	public abstract List<Question> getQuestionList(Long sid);
 }

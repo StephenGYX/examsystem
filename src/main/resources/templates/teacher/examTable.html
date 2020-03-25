@@ -19,6 +19,14 @@
 
 <table id="demo" lay-filter="test"></table>
 
+<script type="text/html" id="msg2">
+    <div class="layui-btn-container">
+        <button type="button" class="layui-btn" lay-demotransferactive="getData">提交</button>
+    </div>
+
+    <div id="test7" class="demo-transfer"></div>
+</script>
+
 <script id="msg" type="text/html">
     <div class="layui-form-item">
         <label class="layui-form-label">科目:</label>
@@ -174,9 +182,11 @@
             <span id="sum">15</span>
         </div>
     </div>
+
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="formDemo" id="random">随机生成</button>
+            <button class="layui-btn"  id="random">随机生成</button>
+            <button class="layui-btn"  id="yes">手动生成</button>
         </div>
     </div>
 
@@ -220,7 +230,7 @@
 	    document.getElementById("sum").innerText=sum;
     }
 
-	layui.use('table', function()
+	layui.use(['transfer', 'layer', 'util','table'], function()
 	{
 		var table=layui.table;
 		table.render({
@@ -281,16 +291,9 @@
 		                        {
                                     if(msg==="yes")
                                     {
-	                                    layer.open({
-		                                    title: ['温馨提示'],
-		                                    content: '删除成功',
-		                                    btn: ['确定'],
-		                                    closeBtn: 0,
-		                                    yes: function () {
-			                                    $(".layui-laypage-btn")[0].click();
-			                                    layer.close(index);
-		                                    }
-	                                    });
+	                                    layer.alert("删除成功", {icon: 1});
+                                        $(".layui-laypage-btn")[0].click();
+                                        layer.close(index);
                                     }
                                     else
                                     {
@@ -313,150 +316,341 @@
                 });
 			});
 		});
-	});
 
-	$('#add').click(function()
-	{
-		var str= layer.open({
-			type: 1,
-			content: $('#msg').html(),
-			area: ['400px','400px'],
-			title: '新增试卷',
-			success:function ()
-            {
-	            $.ajax({
-		            type:"POST",
-		            url:"/eq/getSubs",
-		            success:function(msg)
-		            {
-			            document.getElementById("subject").length=0;
-			            for(var i=0;i<msg.length;i++)
-			            {
-				            $('#subject').append("<option value='"+msg[i].sid+"'>"+msg[i].sname+"</option>")
-			            }
-		            },
-		            error:function ()
-		            {
-			            layer.alert("服务器正忙.....", {icon: 5});
-		            }
-	            });
-			}
-		});
-		$('#random').click(function ()
+
+		$('#add').click(function()
 		{
-			var subject=$('#subject').val();
-			var eduration=$('#eduration').val();
-            var ename=$('#ename').val();
-            var ecode=$('#ecode').val();
-            var estart=$('#estart').val();
-            var eend=$('#eend').val();
-			var q1=$('#q1').val();
-			var q2=$('#q2').val();
-			var q3=$('#q3').val();
-			var q4=$('#q4').val();
-			var sum=Number(q1)*2+Number(q2)+Number(q3)*2+Number(q4)*10;
-
-            if(!(ename.length>=2 && ename.length<=10))
-            {
-	            layer.alert("请输入2-10位的试卷名", {icon: 5});
-            }
-
-			else if(!(ecode.length>=4 && ecode.length<=6))
+			var str= layer.open({
+				type: 1,
+				content: $('#msg').html(),
+				area: ['400px','400px'],
+				title: '新增试卷',
+				success:function ()
+				{
+					$.ajax({
+						type:"POST",
+						url:"/eq/getSubs",
+						success:function(msg)
+						{
+							document.getElementById("subject").length=0;
+							for(var i=0;i<msg.length;i++)
+							{
+								$('#subject').append("<option value='"+msg[i].sid+"'>"+msg[i].sname+"</option>")
+							}
+						},
+						error:function ()
+						{
+							layer.alert("服务器正忙.....", {icon: 5});
+						}
+					});
+				}
+			});
+			$('#random').click(function ()
 			{
-				layer.alert("请输入4-6位的考试码", {icon: 5});
-			}
+				var subject=$('#subject').val();
+				var eduration=$('#eduration').val();
+				var ename=$('#ename').val();
+				var ecode=$('#ecode').val();
+				var estart=$('#estart').val();
+				var eend=$('#eend').val();
+				var q1=$('#q1').val();
+				var q2=$('#q2').val();
+				var q3=$('#q3').val();
+				var q4=$('#q4').val();
+				var sum=Number(q1)*2+Number(q2)+Number(q3)*2+Number(q4)*10;
 
-			else if(estart.length===0)
-            {
-            	layer.alert("请选择开始时间", {icon: 5});
-            }
+				if(!(ename.length>=2 && ename.length<=10))
+				{
+					layer.alert("请输入2-10位的试卷名", {icon: 5});
+				}
 
-            else if(eend.length===0)
-            {
-	            layer.alert("请选择截止时间", {icon: 5});
-            }
+				else if(!(ecode.length>=4 && ecode.length<=6))
+				{
+					layer.alert("请输入4-6位的考试码", {icon: 5});
+				}
 
-			else if(estart>eend)
-            {
-	            layer.alert("截止时间不能小于开始时间", {icon: 5});
-            }
+				else if(estart.length===0)
+				{
+					layer.alert("请选择开始时间", {icon: 5});
+				}
 
-			else if(!(sum===100))
-            {
-	            layer.alert("总分必须为100", {icon: 5});
-            }
-			else
-            {
-	            $.ajax({
-		            type:'POST',
-		            url:'/eq/check',
-		            data: {sid:subject,q1:q1,q2:q2,q3:q3,q4:q4,estart:estart,ecode:ecode},
-		            success:function(msg)
-		            {
-			            if(msg==="time")
-			            {
-				            layer.alert("开始日期必须在今天之后", {icon: 5});
-			            }
-			            else if(msg==="code")
-                        {
-	                        layer.alert("考试码已存在", {icon: 5});
-                        }
-			            else if(msg==="q1")
-                        {
-	                        layer.alert("选择题数量不足，请先新增题库", {icon: 5});
-                        }
-			            else if(msg==="q2")
-			            {
-				            layer.alert("判断题数量不足，请先新增题库", {icon: 5});
-			            }
-			            else if(msg==="q3")
-			            {
-				            layer.alert("填空题数量不足，请先新增题库", {icon: 5});
-			            }
-			            else if(msg==="q4")
-			            {
-				            layer.alert("简答题数量不足，请先新增题库", {icon: 5});
-			            }
-			            else
-			            {
-				            $.ajax({
-					            type:"POST",
-					            url:"/eq/addExam",
-					            data: {sid:subject,q1:q1,q2:q2,q3:q3,q4:q4,estart:estart,eend:eend,ename:ename,ecode:ecode,eduration:eduration},
-					            success:function(msg)
-					            {
-						            if(msg==="yes")
-                                    {
-	                                    layer.open({
-		                                    title: ['温馨提示'],
-		                                    content: '新增成功',
-		                                    btn: ['确定'],
-		                                    closeBtn: 0,
-		                                    yes: function () {
-			                                    window.location.href = "/go/to/teacher/examTable";
-		                                    }
-	                                    });
-                                    }
-						            else
-                                    {
-	                                    layer.alert("新增失败，请重试", {icon: 5});
-                                    }
-					            },
-					            error:function ()
-					            {
-						            layer.alert("服务器正忙.....", {icon: 5});
-					            }
-				            });
-			            }
-		            },
-		            error:function ()
-		            {
-			            layer.alert("服务器正忙.....", {icon: 5});
-		            }
-	            });
-            }
+				else if(eend.length===0)
+				{
+					layer.alert("请选择截止时间", {icon: 5});
+				}
+
+				else if(estart>eend)
+				{
+					layer.alert("截止时间不能小于开始时间", {icon: 5});
+				}
+
+				else if(!(sum===100))
+				{
+					layer.alert("总分必须为100", {icon: 5});
+				}
+				else
+				{
+					$.ajax({
+						type:'POST',
+						url:'/eq/check',
+						data: {sid:subject,q1:q1,q2:q2,q3:q3,q4:q4,estart:estart,ecode:ecode},
+						success:function(msg)
+						{
+							if(msg==="time")
+							{
+								layer.alert("开始日期必须在今天之后", {icon: 5});
+							}
+							else if(msg==="code")
+							{
+								layer.alert("考试码已存在", {icon: 5});
+							}
+							else if(msg==="q1")
+							{
+								layer.alert("选择题数量不足，请先新增题库", {icon: 5});
+							}
+							else if(msg==="q2")
+							{
+								layer.alert("判断题数量不足，请先新增题库", {icon: 5});
+							}
+							else if(msg==="q3")
+							{
+								layer.alert("填空题数量不足，请先新增题库", {icon: 5});
+							}
+							else if(msg==="q4")
+							{
+								layer.alert("简答题数量不足，请先新增题库", {icon: 5});
+							}
+							else
+							{
+								layer.load(1, {
+									shade: [0.1,'#fff'] //0.1透明度的白色背景
+								});
+								$.ajax({
+									type:"POST",
+									url:"/eq/addExam",
+									data: {sid:subject,q1:q1,q2:q2,q3:q3,q4:q4,estart:estart,eend:eend,ename:ename,ecode:ecode,eduration:eduration},
+									success:function(msg)
+									{
+										if(msg==="yes")
+										{
+											layer.open({
+												title: ['温馨提示'],
+												content: '新增成功',
+												btn: ['确定'],
+												closeBtn: 0,
+												yes: function () {
+													window.location.href = "/go/to/teacher/examTable";
+												}
+											});
+										}
+										else
+										{
+											layer.alert("新增失败，请重试", {icon: 5});
+										}
+									},
+									error:function ()
+									{
+										layer.alert("服务器正忙.....", {icon: 5});
+									}
+								});
+							}
+						},
+						error:function ()
+						{
+							layer.alert("服务器正忙.....", {icon: 5});
+						}
+					});
+				}
+			});
+
+
+			$('#yes').click(function ()
+			{
+				var subject=$('#subject').val();
+				var eduration=$('#eduration').val();
+				var ename=$('#ename').val();
+				var ecode=$('#ecode').val();
+				var estart=$('#estart').val();
+				var eend=$('#eend').val();
+				var q1=$('#q1').val();
+				var q2=$('#q2').val();
+				var q3=$('#q3').val();
+				var q4=$('#q4').val();
+				var sum=Number(q1)*2+Number(q2)+Number(q3)*2+Number(q4)*10;
+
+				if(!(ename.length>=2 && ename.length<=10))
+				{
+					layer.alert("请输入2-10位的试卷名", {icon: 5});
+				}
+
+				else if(!(ecode.length>=4 && ecode.length<=6))
+				{
+					layer.alert("请输入4-6位的考试码", {icon: 5});
+				}
+
+				else if(estart.length===0)
+				{
+					layer.alert("请选择开始时间", {icon: 5});
+				}
+
+				else if(eend.length===0)
+				{
+					layer.alert("请选择截止时间", {icon: 5});
+				}
+
+				else if(estart>eend)
+				{
+					layer.alert("截止时间不能小于开始时间", {icon: 5});
+				}
+
+				else if(!(sum===100))
+				{
+					layer.alert("总分必须为100", {icon: 5});
+				}
+				else
+				{
+					$.ajax({
+						type:'POST',
+						url:'/eq/check',
+						data: {sid:subject,q1:q1,q2:q2,q3:q3,q4:q4,estart:estart,ecode:ecode},
+						success:function(msg)
+						{
+							if(msg==="time")
+							{
+								layer.alert("开始日期必须在今天之后", {icon: 5});
+							}
+							else if(msg==="code")
+							{
+								layer.alert("考试码已存在", {icon: 5});
+							}
+							else if(msg==="q1")
+							{
+								layer.alert("选择题数量不足，请先新增题库", {icon: 5});
+							}
+							else if(msg==="q2")
+							{
+								layer.alert("判断题数量不足，请先新增题库", {icon: 5});
+							}
+							else if(msg==="q3")
+							{
+								layer.alert("填空题数量不足，请先新增题库", {icon: 5});
+							}
+							else if(msg==="q4")
+							{
+								layer.alert("简答题数量不足，请先新增题库", {icon: 5});
+							}
+							else
+							{
+                                var transfer=layui.transfer;
+                                var util=layui.util;
+								var data1=[];
+								$.ajax({
+									type:"POST",
+									url:"/eq/getQuestionList",
+                                    data:{sid:subject},
+									success:function(msg)
+									{
+										for(var i=0;i<msg.length;i++)
+                                        {
+	                                        data1.push(msg[i]);
+                                        }
+										layer.open({
+											type: 1,
+											content: $('#msg2').html(),
+											area: ['800px','400px'],
+											title: '选择题目',
+											success:function ()
+											{
+												transfer.render({
+													elem: '#test7'
+													,data: data1
+													,title: ['未选择', '已选择']
+													,id: 'key123' //定义唯一索引
+												});
+												//批量办法定事件
+												util.event('lay-demoTransferActive', {
+													getData: function(othis){
+														var getData = transfer.getData('key123'); //获取右侧数据
+                                                        $.ajax({
+															type:"POST",
+															url:"/eq/checkQuest",
+                                                            data:{list:JSON.stringify(getData),q1:q1,q2:q2,q3:q3,q4:q4},
+															success:function(msg)
+															{
+                                                                if(msg==="no")
+                                                                {
+	                                                                layer.alert("您添加的题目数量与您之前选择的数量不匹配，请重新选择", {icon: 5});
+                                                                }
+                                                                else
+                                                                {
+	                                                                layer.load(1, {
+		                                                                shade: [0.1,'#fff'] //0.1透明度的白色背景
+	                                                                });
+	                                                                $.ajax({
+		                                                                type:"POST",
+		                                                                url:"/eq/addExam2",
+		                                                                data: {list:JSON.stringify(getData),sid:subject,estart:estart,eend:eend,ename:ename,ecode:ecode,eduration:eduration},
+		                                                                success:function(msg)
+		                                                                {
+			                                                                if(msg==="yes")
+			                                                                {
+				                                                                layer.open({
+					                                                                title: ['温馨提示'],
+					                                                                content: '新增成功',
+					                                                                btn: ['确定'],
+					                                                                closeBtn: 0,
+					                                                                yes: function () {
+						                                                                window.location.href = "/go/to/teacher/examTable";
+					                                                                }
+				                                                                });
+			                                                                }
+			                                                                else
+			                                                                {
+				                                                                layer.alert("新增失败，请重试", {icon: 5});
+			                                                                }
+		                                                                },
+		                                                                error:function ()
+		                                                                {
+			                                                                layer.alert("服务器正忙.....", {icon: 5});
+		                                                                }
+	                                                                });
+                                                                }
+															},
+															error:function ()
+															{
+																layer.alert("服务器正忙.....", {icon: 5});
+															}
+														});
+													}
+												});
+											}
+										});
+									},
+									error:function ()
+									{
+										layer.alert("服务器正忙.....", {icon: 5});
+									}
+								});
+							}
+						},
+						error:function ()
+						{
+							layer.alert("服务器正忙.....", {icon: 5});
+						}
+					});
+				}
+			});
+
 		});
+
 	});
+
+
+
+
+
+
+
 
 </script>
 

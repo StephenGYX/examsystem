@@ -52,16 +52,9 @@
                         data: {cname: data.cname},
                         success: function (msg) {
                             if (msg === "yes") {
-	                            layer.open({
-		                            title: ['温馨提示'],
-		                            content: '删除成功',
-		                            btn: ['确定'],
-		                            closeBtn: 0,
-		                            yes: function () {
-			                            $(".layui-laypage-btn")[0].click();
-			                            layer.close(index);
-		                            }
-	                            });
+	                            layer.alert("删除成功", {icon: 1});
+	                            $(".layui-laypage-btn")[0].click();
+	                            layer.close(index);
 
                             } else {
                                 layer.alert("移除失败，请重试", {icon: 5});

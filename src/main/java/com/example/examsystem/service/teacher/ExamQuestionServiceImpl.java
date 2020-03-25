@@ -1,9 +1,6 @@
 package com.example.examsystem.service.teacher;
 
-import com.example.examsystem.bean.Exam;
-import com.example.examsystem.bean.Subject;
-import com.example.examsystem.bean.TableModel;
-import com.example.examsystem.bean.Teacher;
+import com.example.examsystem.bean.*;
 import com.example.examsystem.dao.ExamQuestionDao;
 import com.google.gson.Gson;
 import org.hibernate.validator.constraints.EAN;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -86,6 +84,30 @@ public class ExamQuestionServiceImpl implements ExamQuestionService
 	}
 
 	@Override
+	public String addExam2(HttpServletRequest request, Long sid, String estart, String eend, String ename, String ecode, String eduration, QuestModel[] list)
+	{
+		String str="no";
+		Teacher teacher=(Teacher) request.getSession().getAttribute("teacher");
+		Exam exam=new Exam();
+		exam.setEcode(ecode);
+		exam.setEduration(eduration);
+		exam.setEname(ename);
+		exam.setEstart(estart);
+		exam.setEend(eend);
+		exam.setSid(sid);
+		exam.setTid(Long.valueOf(teacher.getTid()));
+		exam.setEregtime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+		examQuestionDao.addExam(exam);
+
+		for (QuestModel questModel : list)
+		{
+			examQuestionDao.addExamQuestion(exam.getEid(),Long.valueOf(questModel.getValue()));
+		}
+		str="yes";
+		return str;
+	}
+
+	@Override
 	public String addExam(HttpServletRequest request, Long sid, Integer q1, Integer q2, Integer q3, Integer q4, String estart, String eend, String ename, String ecode, String eduration)
 	{
 		String str="no";
@@ -137,6 +159,75 @@ public class ExamQuestionServiceImpl implements ExamQuestionService
 		}
 
 		str="yes";
+		return str;
+	}
+
+	@Override
+	public List<QuestModel> getQuestionList(Long sid)
+	{
+		List<Question> list=examQuestionDao.getQuestionList(sid);
+		List<QuestModel> modelList=new ArrayList<>();
+		for (Question question : list)
+		{
+			String str="";
+			switch (question.getQtype())
+			{
+				case 1:
+					str="【选择题】";
+				break;
+				case 2:
+					str="【判断题】";
+					break;
+				case 3:
+					str="【填空题】";
+					break;
+				case 4:
+					str="【简答题】";
+					break;
+			}
+			QuestModel qm=new QuestModel();
+			qm.setValue(question.getQid()+"");
+			qm.setType(question.getQtype()+"");
+			qm.setTitle(str+question.getTitle());
+			modelList.add(qm);
+		}
+		return modelList;
+	}
+
+	@Override
+	public String checkQuest(QuestModel[] list, int q1, int q2, int q3, int q4)
+	{
+
+		String str="no";
+		int a=0;
+		int b=0;
+		int c=0;
+		int d=0;
+
+		for (QuestModel questModel : list)
+		{
+			switch (questModel.getType())
+			{
+				case "1" :
+					a++;
+					break;
+				case "2" :
+					b++;
+					break;
+				case "3" :
+					c++;
+					break;
+				case "4" :
+					d++;
+					break;
+			}
+		}
+		if(a==q1 && b==q2 && c==q3 && d==q4)
+		{
+			str="yes";
+		}
+
+
 		return str;
 	}
 
