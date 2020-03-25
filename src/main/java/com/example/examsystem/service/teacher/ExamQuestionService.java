@@ -15,4 +15,7 @@ public interface ExamQuestionService
 
 	public abstract String deleteExam(Long eid);
 
+	public String check(Long sid,Integer q1,Integer q2,Integer q3,Integer q4,String estart,String ecode);
+
+	public String addExam(HttpServletRequest request,Long sid,Integer q1,Integer q2,Integer q3,Integer q4,String estart,String eend,String ename,String ecode,String eduration);
 }

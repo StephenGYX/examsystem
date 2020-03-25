@@ -41,6 +41,20 @@ public class ExamQuestionController
 		return examQuestionServiceImpl.deleteExam(Long.valueOf(eid));
 	}
 
+	@RequestMapping("check")
+	@ResponseBody
+	public String check(Long sid, Integer q1, Integer q2, Integer q3, Integer q4, String estart, String ecode)
+	{
+		return examQuestionServiceImpl.check(sid, q1, q2, q3, q4, estart, ecode);
+	}
+
+	@RequestMapping("addExam")
+	@ResponseBody
+	public String addExam(HttpServletRequest request, Long sid, Integer q1, Integer q2, Integer q3, Integer q4, String estart, String eend, String ename, String ecode, String eduration)
+	{
+		return examQuestionServiceImpl.addExam(request, sid, q1, q2, q3, q4, estart, eend, ename, ecode, eduration);
+	}
+
 	@RequestMapping("getSubs")
 	@ResponseBody
 	public List<Subject> getSubs(HttpServletRequest request)
