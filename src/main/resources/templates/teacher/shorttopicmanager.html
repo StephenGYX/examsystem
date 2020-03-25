@@ -246,9 +246,10 @@
 </script>
 
 <script>
-	layui.use('upload', function () {
+	layui.use(['upload', 'table'], function () {
 		var $ = layui.jquery
-			, upload = layui.upload;
+			, upload = layui.upload,
+			table = layui.table;
 		//指定允许上传的文件类型
 		upload.render({
 			elem: '#test3'
