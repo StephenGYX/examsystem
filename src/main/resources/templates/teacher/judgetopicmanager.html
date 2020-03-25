@@ -156,11 +156,11 @@
 				},
 				success: function (msg) {
 					if (msg == "success") {
-						$(".layui-laypage-btn")[0].click();
 						layer.close(opAdd);
-						layer.msg("添加成功", {icon: 1});
+						location.reload();
+						alert("添加成功");
 					} else {
-						layer.msg("添加失败", {icon: 2});
+						alert("添加失败");
 					}
 				}
 			})
@@ -207,12 +207,12 @@
 						},
 						dataType: 'text',
 						success: function (result) {
-							if(result=='s'){
+							if (result == 's') {
 								layer.alert("删除成功", {icon: 1}, function (index1) {
 									layer.close(index1);
 									table.reload('topic');
 								});
-							}else{
+							} else {
 								layer.alert("删除失败，已有试卷在使用该题", {icon: 2})
 							}
 
@@ -273,6 +273,7 @@
 			,
 			done: function (res) {
 				layer.alert(res.msg);
+				table.reload('topic');
 			}
 		});
 	});

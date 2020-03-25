@@ -417,6 +417,7 @@
 			,
 			done: function (res) {
 				layer.alert(res.msg);
+				table.reload('topic');
 			}
 		});
 	});
