@@ -217,7 +217,7 @@
                         success: function (result) {
                             if (result === 'true') {
                                 layer.alert('新增成功');
-                                layer.closeAll();
+                                layer.close('');
                                 table.reload('teacher');
                             } else if (result === 'false') {
                                 layer.alert('新增失败');
