@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <link rel="stylesheet" th:href="@{/layuires/layui/css/layui.css}">
+    <script th:src="@{/layuires/layui/layui.js}"></script>
+    <script th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+<body>
+
+<span id="mpassword" hidden="hidden" th:text="${session.teacher.tpassword}"/>
+
+<input type="button" id="updatePass" class="layui-btn" value="修改密码">
+
+<table id="demo" lay-filter="test"></table>
+
+
+<script id="msg" type="text/html">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">原密码:</label>
+        <div class="layui-input-inline">
+            <input type="password" id="oldPass"  required  lay-verify="required" placeholder="请输入原密码"  class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" ></div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">新密码:</label>
+        <div class="layui-input-inline">
+            <input type="password" id="newPass"  required  lay-verify="required" placeholder="请输入新密码"  class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" ></div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">再输入:</label>
+        <div class="layui-input-inline">
+            <input type="password" id="newPass2"  required  lay-verify="required" placeholder="请再次输入新密码"  class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" ></div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn"  id="yes">确定修改</button>
+        </div>
+    </div>
+
+</script>
+
+<script>
+
+	layui.use('table', function () {
+		var table = layui.table;
+		table.render({
+			elem: '#demo'
+			, url: "/pass/getList"
+			, cols: [
+				[
+					{field: 'taccount', title: '账号', width: '25%'}
+					, {field: 'tsex', title: '性别', width: '25%'}
+					, {field: 'teducation', title: '学历', width: '25%'}
+					, {field: 'tbirth', title: '生日', width: '25%'}
+				]
+			]
+		});
+		$("#updatePass").click(function ()
+		{
+			var dia=layer.open({
+				type: 1,
+				content: $('#msg').html(),
+				area: ['400px','300px'],
+				title: '修改密码',
+				success:function ()
+				{
+
+				}
+			});
+			$('#yes').click(function ()
+			{
+				var oldPass=$('#oldPass').val();
+				var newPass=$('#newPass').val();
+				var newPass2=$('#newPass2').val();
+				var mpass=document.getElementById("mpassword").innerText;
+				if(!(oldPass.trim()===mpass))
+				{
+					layer.alert("原密码有误", {icon: 5});
+				}
+				else if(!(newPass.trim().length>=6 && newPass.trim().length<=8))
+				{
+					layer.alert("请输入6-8位的新密码", {icon: 5});
+				}
+				else if(!(newPass.trim()===newPass2.trim()))
+				{
+					layer.alert("两次新密码输入不一致", {icon: 5});
+				}
+				else if(oldPass===newPass)
+				{
+					layer.alert("原密码和新密码不得一致", {icon: 5});
+				}
+				else
+				{
+					$.ajax({
+						type: "POST",
+						url: "/pass/updateTeacherPassword",
+						dataType: "text",
+						data: {pass: newPass},
+						success: function (msg) {
+							if (msg === "yes") {
+								layer.alert("修改成功", {icon: 1});
+								layer.close(dia);
+							} else {
+								layer.alert("修改失败，请重试", {icon: 5});
+							}
+						},
+						error: function () {
+							layer.alert("服务器正忙.....", {icon: 5});
+						}
+					});
+				}
+			});
+		});
+
+	});
+
+</script>
+
+</body>
+</html>
