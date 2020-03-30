@@ -26,5 +26,6 @@ public interface StudentExamDao
 	public int overexam(@Param("eid")String eid,@Param("sid")String sid,@Param("start")String start,@Param("end")String end);
 	//获取题目类型
 	public Question getType(@Param("qid")String qid);
-
+	//修改密码
+	public int changePass(@Param("saccount")String saccount,@Param("spass")String spass);
 }

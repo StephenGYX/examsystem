@@ -31,4 +31,8 @@
     <insert id="overexam" parameterType="java.lang.String">
         insert into studentexam(eid, sid, starttime, endtime) value (#{eid},#{sid},#{start},#{end})
     </insert>
+
+    <update id="changePass" parameterType="java.lang.String">
+        update student set spassword=#{spass} where saccount=#{saccount}
+    </update>
 </mapper>

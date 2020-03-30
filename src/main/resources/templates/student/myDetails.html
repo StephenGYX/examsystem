@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人资料</title>
+    <link th:href="@{/css/personal.css}" rel="stylesheet" type="text/css">
+    <script th:src="@{/js/jquery-3.4.1.js}"></script>
+</head>
+
+<body>
+<div style="width: 100%;height: 10px;background-color: white">
+
+    <div class="perTitle">
+        <img alt="加载失败"  th:src="@{/images/1314520.png}">
+        <span style="width: 150px">基本信息</span>
+    </div>
+    <div id="basicInfo">
+        <div id="editPoneDiv" style="cursor: pointer; background-color: white;">
+            <span class="point"></span>
+            <span class="col1">姓名：</span>
+            <span class="col2" id="uname"></span>
+        </div>
+        <div style="background-color: rgb(241, 241, 241);" >
+            <span class="point"></span>
+            <span class="col1">学号：</span>
+            <span class="col2" id="uaccount"></span>
+        </div>
+        <div style="cursor: pointer; background-color: white;">
+            <span class="point"></span>
+            <span class="col1">性别：</span>
+            <span class="col2" id="usex" ></span>
+        </div>
+        <div style="background-color: rgb(241, 241, 241);">
+            <span class="point"></span>
+            <span class="col1">生日：</span>
+            <span class="col2" id="birthday"></span>
+        </div>
+        <div style="cursor: pointer; background-color: white;">
+            <span class="point" ></span>
+            <span class="col1" >班级</span>
+            <span class="col2" id="clazz"></span>
+        </div>
+        <div style="background-color: rgb(241, 241, 241);">
+            <span class="point"></span>
+            <span class="col1">注册时间：</span>
+            <span class="col2" id="regtime"></span>
+        </div>
+
+    </div>
+</div>
+</body>
+
+
+<script>
+    $(function () {
+       $.ajax({
+           type:'get'
+           ,url:'/studentexam/getStudent'
+           ,success:function (msg) {
+               $("#uname").append(msg.sname);
+		       $("#uaccount").append(msg.saccount);
+		       $("#usex").append(msg.ssex);
+		       $("#birthday").append(msg.sbirth);
+		       $("#clazz").append(msg.sclass);
+		       $("#regtime").append(msg.sregtime);
+	       }
+	       ,error:function () {
+               layer.msg('网络加载异常，请稍后再试',{icon:7})
+	       }
+       });
+
+    });
+
+</script>
+</html>

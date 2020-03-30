@@ -142,5 +142,33 @@ public class StudentExamServiceImpl implements StudentExamService
 		return res;
 	}
 
+	/**
+	 * 修改密码
+	 * @param pass
+	 * @param newPass
+	 * @param session
+	 * @return
+	 */
+	@Override
+	public String changePass(String pass, String newPass, HttpSession session)
+	{
+		String res="not";
+		Student student=(Student)session.getAttribute("student");
+		if (!student.getSpassword().equals(newPass))
+		{
+			int index=studentExamDao.changePass(student.getSaccount(),newPass);
+			if (index>0)
+			{
+				res="success";
+				student.setSpassword(newPass);
+				session.setAttribute("student",student);
+			}else
+			{
+				res="error";
+			}
+		}
+		return res;
+	}
+
 
 }

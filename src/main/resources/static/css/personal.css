@@ -1,0 +1,142 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: arial;
+}
+.perTitle{
+    width: 100%;
+    height: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    user-select: none;
+}
+.perTitle:hover{
+    cursor: default;
+}
+.perTitle>img{
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    padding-right: 3px;
+}
+.perTitle>span{
+    display: inline-block;
+    font-size: 16px;
+    color: #333333;
+    width: 861px;
+    line-height:32px;
+    background-image: url('../../img/personal/u17148.png');
+    background-position: bottom;
+    background-repeat:no-repeat;
+}
+#basicInfo{
+    width: 100%;
+    height: auto;
+}
+#basicInfo>div{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    color: #666666;
+    font-size: 14px;
+    user-select: none;
+}
+#basicInfo>div:hover{
+    cursor: default;
+}
+
+#basicInfo>div>span{
+    display: inline-block;
+    vertical-align: middle;
+}
+.point{
+    width: 7px;
+    height: 7px;
+    background-color: #999999;
+    margin-left: 40px;
+    margin-right: 15px;
+}
+.col1{
+    width: 90px;
+}
+.col2{
+    width: 200px;
+}
+#editPone{
+    color: #F22B00;
+    float: right;
+    line-height: 50px;
+    width: 100px;
+    margin-right: 10px;
+}
+#editPone:hover>span{
+    padding-left: 6px;
+}
+/*--------------考核信息----------------*/
+
+
+#checkInfo{
+    width: 100%;
+    height: auto;
+}
+#checkInfo>div{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    color: #505050;
+    font-size: 14px;
+    user-select: none;
+}
+#checkInfo>div:hover{
+    cursor: default;
+}
+#checkInfo>div>span{
+    display: inline-block;
+    vertical-align: middle;
+}
+#checkSignIn,#checkAction{
+    font-size: 14px;
+    color: #666666;
+    float: right;
+    width: 111px;
+    margin-right: 10px;
+}
+#checkSignIn:hover,#checkAction:hover{
+    color: #F22B00;
+    cursor: pointer;
+}
+#checkSignIn:hover>span,#checkAction:hover>span{
+    padding-left: 6px;
+    color: #F22B00;
+}
+/*--------------考核信息----------------*/
+/*--------------账号信息----------------*/
+#accountInfo{
+    width: 100%;
+    height: auto;
+}
+#accountInfo>div{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    color: #666666;
+    font-size: 14px;
+    user-select: none;
+}
+#accountInfo>div:hover{
+    cursor: default;
+}
+#accountInfo>div>span{
+    display: inline-block;
+    vertical-align: middle;
+}
+#editPass{
+    color: #F22B00;
+    float: right;
+    line-height: 50px;
+    width: 85px;
+    margin-right: 10px;
+}
+#editPass:hover>span{
+    padding-left: 10px;
+}

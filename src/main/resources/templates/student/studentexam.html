@@ -24,9 +24,9 @@
 					<a href='javascript:;'>
 						<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
 					<dl class='layui-nav-child'>
-						<dd><a id="saccount" onclick="onAccount()"></a></dd>
-						<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
-						<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
+<!--						<dd><a id="saccount" onclick="onAccount()"></a></dd>-->
+						<dd><a onclick="myDetails()">个人资料</a></dd>
+						<dd><a onclick="myPass()">修改密码</a></dd>
 						<dd><a onclick="logout()">注销登录</a></dd>
 					</dl>
 				</li>
@@ -76,7 +76,6 @@
 					window.location.href = '/studentexam/tologin';
 				} else {
 					document.getElementById("sname").innerText = res.sname;
-					document.getElementById("saccount").innerText = res.saccount;
 					account = res.saccount;
 					name = res.sname;
 					examnum();
@@ -183,9 +182,9 @@
 
 	}
 
-	function onAccount() {
-		layer.alert('当前登录学生姓名：'+name+'，账号：'+account,{icon:6})
-	}
+	// function onAccount() {
+	// 	layer.alert('当前登录学生姓名：'+name+'，账号：'+account,{icon:6})
+	// }
 
 	//提交考试码开始考试
 	function examnum() {
@@ -256,6 +255,28 @@
 			layer.alert("考试结束",{icon:6});
 			submitexam();
 		}
+	}
+
+	function myDetails() {
+		layer.open({
+			type: 2 //Page层类型
+			,area: ['700px', '500px']
+			,title: '个人资料'
+			,shade: 0.3 //遮罩透明度
+			,anim: 1 //0-6的动画形式，-1不开启
+			,content:'/studentexam/myDetails'
+		});
+	}
+
+	function myPass() {
+		layer.open({
+			type: 2 //Page层类型
+			,area: ['700px', '400px']
+			,title: '修改密码'
+			,shade: 0.3 //遮罩透明度
+			,anim: 1 //0-6的动画形式，-1不开启
+			,content:'/studentexam/myPass'
+		});
 	}
 
 </script>

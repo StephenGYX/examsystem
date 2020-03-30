@@ -44,6 +44,25 @@ public class StudentExamController
 		return "index";
 	}
 
+
+	/**
+	 * 跳转个人信息弹窗
+	 * @return
+	 */
+	@RequestMapping("/myDetails")
+	public String myDetails(){
+		return "student/myDetails";
+	}
+
+	/**
+	 * 跳转修改密码弹窗
+	 * @return
+	 */
+	@RequestMapping("/myPass")
+	public String myPass(){
+		return "student/changepassword";
+	}
+
 	/**
 	 * 判断用户是否存在
 	 * @param session
@@ -84,6 +103,20 @@ public class StudentExamController
         return "success";
 	}
 
+	/**
+	 * 用户修改密码退出登录
+	 * @param session
+	 * @return
+	 */
+	@GetMapping("/tologout")
+	public String tologout(HttpSession session){
+		Enumeration em = session.getAttributeNames();
+		while(em.hasMoreElements()){
+			session.removeAttribute(em.nextElement().toString());
+		}
+		return "index";
+	}
+
 	@PostMapping("/examnum")
 	@ResponseBody
 	public List<Question> examQuestion(String examnum,HttpSession session){
@@ -99,4 +132,29 @@ public class StudentExamController
 	public String doexam(HttpServletRequest request){
 		return studentExamServiceImpl.doexam(request);
 	}
+
+
+	/**
+	 * 查看学生个人详情信息
+	 * @param session
+	 * @return
+	 */
+	@GetMapping("/getStudent")
+	@ResponseBody
+	public Student getStudent(HttpSession session){
+		return (Student)session.getAttribute("student");
+	}
+
+
+	/**
+	 * 修改密码
+	 * @param session
+	 * @return
+	 */
+	@PostMapping("/changePass")
+	@ResponseBody
+	public String changePass(String pass,String newPass,HttpSession session){
+		return studentExamServiceImpl.changePass(pass, newPass, session);
+	}
+
 }

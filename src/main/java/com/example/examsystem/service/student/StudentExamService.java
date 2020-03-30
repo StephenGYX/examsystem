@@ -11,4 +11,5 @@ public interface StudentExamService
 	public List<Question> examQuestion(String examnum, HttpSession session);
 	public String doexam(HttpServletRequest request);
 	public String getOnline(HttpSession session);
+	public String changePass(String pass,String newPass,HttpSession session);
 }
