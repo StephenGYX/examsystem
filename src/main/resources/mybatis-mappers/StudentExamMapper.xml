@@ -5,6 +5,10 @@
         select * from exam where ecode=#{ecode} and #{nowdate} between estart and eend
     </select>
 
+    <select id="examCode2" parameterType="java.lang.String" resultType="com.example.examsystem.bean.Exam">
+        select * from exam where ecode=#{ecode}
+    </select>
+
     <select id="examQuestion" parameterType="java.lang.Integer" resultType="com.example.examsystem.bean.Question">
         select * from question where qid in(select qid from examquestion where eid=#{eid})
     </select>

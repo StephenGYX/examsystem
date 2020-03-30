@@ -63,7 +63,16 @@ public class StudentExamServiceImpl implements StudentExamService
 			}else
 			{
 				Question q=new Question();
-				q.setQtime("error");
+				exam=studentExamDao.examCode2(examnum);
+				if (exam==null)
+				{
+					q.setQtime("notquestion");
+				}
+				else
+				{
+					q.setQtime("error");
+				}
+
 				list.add(q);
 			}
 		}

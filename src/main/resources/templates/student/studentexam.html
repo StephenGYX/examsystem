@@ -12,53 +12,53 @@
 	<script th:src="@{/js/jquery-3.4.1.js}"></script>
 </head>
 <body class="lay-blog" id="exambody">
-		<div class="header">
-			<div class="header-wrap">
-				<h1 class="logo pull-left">
-					<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
-					<i style="color: white;font-size: 20px">学生考试系统</i>
-				</h1>
-				<div class="blog-nav pull-right">
-					<ul class="layui-nav pull-left" id="menuUl">
-						<li class='layui-nav-item' th:if="${session.student!=null &amp;&amp; session.student!=''}">
-							<a href='javascript:;'>
-								<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
-							<dl class='layui-nav-child'>
-								<dd><a id="saccount" onclick="onAccount()"></a></dd>
-								<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
-								<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
-								<dd><a onclick="logout()">注销登录</a></dd>
-							</dl>
-						</li>
-						<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
-							<a href='/studentexam/tologin' style='font-size: 15px'>请登录！</a></dd>
-						</li>
-						<li class='layui-nav-item'><a href='/studentexam/exammain' style='font-size: 15px'>我要考试</a></li>
-						<li class='layui-nav-item'><a href='/examscore/scoremain' style='font-size: 15px'>查看成绩</a></li>
-					</ul>
+<div class="header">
+	<div class="header-wrap">
+		<h1 class="logo pull-left">
+			<img th:src="@{/layuires/static/images/logo.png}" alt="" class="logo-img">
+			<i style="color: white;font-size: 20px">学生考试系统</i>
+		</h1>
+		<div class="blog-nav pull-right">
+			<ul class="layui-nav pull-left" id="menuUl">
+				<li class='layui-nav-item' th:if="${session.student!=null &amp;&amp; session.student!=''}">
+					<a href='javascript:;'>
+						<i class='layui-icon layui-icon-username' style='font-size: 15px' id="sname"></i></a>
+					<dl class='layui-nav-child'>
+						<dd><a id="saccount" onclick="onAccount()"></a></dd>
+						<!--<dd><a onclick="xadmin.open('个人资料','/myDetails');">个人资料</a></dd>-->
+						<!--<dd><a onclick="xadmin.open('修改密码页面','/myPass');">修改密码</a></dd>-->
+						<dd><a onclick="logout()">注销登录</a></dd>
+					</dl>
+				</li>
+				<li class='layui-nav-item' th:if="${session.student==null || session.student==''}">
+					<a href='/studentexam/tologin' style='font-size: 15px'>请登录！</a></dd>
+				</li>
+				<li class='layui-nav-item'><a href='/studentexam/exammain' style='font-size: 15px'>我要考试</a></li>
+				<li class='layui-nav-item'><a href='/examscore/scoremain' style='font-size: 15px'>查看成绩</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="container-wrap">
+	<div style=" position: fixed;bottom: 1;"><i id="dtime" style="font-size: 15px;color: red"></i></div>
+	<div class="container">
+		<div class="contar-wrap" style="width: 1000px;margin-left: -15%;">
+			<div class="item" style="width: 1000px">
+				<div class="item-box  layer-photos-demo1 layer-photos-demo" id="questionDiv">
 				</div>
 			</div>
 		</div>
-		<div class="container-wrap">
-			<div style=" position: fixed;bottom: 1;"><i id="dtime" style="font-size: 15px;color: red"></i></div>
-			<div class="container">
-				<div class="contar-wrap" style="width: 1000px;margin-left: -15%;">
-					<div class="item" style="width: 1000px">
-						<div class="item-box  layer-photos-demo1 layer-photos-demo" id="questionDiv">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	</div>
+</div>
 
-	<script>
-		layui.config({
-		  base: '/layuires/static/js/'
-		}).use('blog');
-		layui.use('layer',function () {
-			var layer=layui.layer;
-		})
-	</script>
+<script>
+	layui.config({
+		base: '/layuires/static/js/'
+	}).use('blog');
+	layui.use('layer',function () {
+		var layer=layui.layer;
+	})
+</script>
 </body>
 
 <script>
@@ -89,8 +89,8 @@
 	});
 
 	layui.use(['layer','form'],function () {
-        var layer=layui.layer,
-            form=layui.form;
+		var layer=layui.layer,
+				form=layui.form;
 		form.verify({
 			title: function(value){
 				var v=value.trim();
@@ -204,7 +204,7 @@
 						} else if (res[0].qtime === 'online') {
 							layer.msg('你已做完该考试码的考卷，请待老师批改后再查看成绩', {icon: 6});
 						} else if (res[0].qtime === 'notquestion') {
-							layer.msg('该考卷暂时没有试题，请联系任课老师', {icon: 6});
+							layer.msg('考试码错误，请联系任课老师', {icon: 6});
 						} else if (res.length > 0) {
 							dotime(res[0].correct);
 							window.onbeforeunload = function (e) {

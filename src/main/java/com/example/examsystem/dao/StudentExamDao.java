@@ -16,6 +16,8 @@ public interface StudentExamDao
 	public List<Question> examQuestion(@Param("eid") Integer eid);
 	//查看考试码是否存在
 	public Exam examCode(@Param("ecode") String ecode, @Param("nowdate") String nowdate);
+	//查看考试码是否存在
+	public Exam examCode2(@Param("ecode") String ecode);
 	//考试查重
 	public int reviewExam(@Param("ecode") String ecode, @Param("sid") String sid);
 	//考试提交
