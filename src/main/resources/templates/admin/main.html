@@ -20,15 +20,18 @@
                 考试系统-教师端
 
         </div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item" th:if="${null != session.admin &amp;&amp; '' != session.admin  }">
                 欢迎你：<span th:text="${session.admin.account}"/>
+                <span id="mpassword" hidden="hidden" th:text="${session.admin.password}"/>
+                <dl class="layui-nav-child">
+                    <dd><a  id="updatePass">修改密码</a></dd>
+                </dl>
             </li>
             <li class="layui-nav-item" th:if="${null != session.teacher &amp;&amp; '' != session.teacher  }">
-                欢迎你：<span th:text="${session.teacher.tname}"/></li>
-            <!--            <p th:text="${session.admin.account}"/>-->
+                欢迎你：<span th:text="${session.teacher.tname}"/>
+            </li>
 
 
             <li class="layui-nav-item"><a href="/admin/exit">注销</a></li>
@@ -68,13 +71,107 @@
 </div>
 
 
-<script type="text/javascript">
-    // e.preventDefault();：设置a的点击事件不跳转到另一个页面
-    // $("iframeMain").attr("src",$(this).attr("href"));：给iframe添加src属性，值为a的href值
-    layui.use('element', function () {
-        var element = layui.element;
-    });
+<script id="msg" type="text/html">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">原密码:</label>
+        <div class="layui-input-inline">
+            <input type="password" id="oldPass"  required  lay-verify="required" placeholder="请输入原密码"  class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" ></div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">新密码:</label>
+        <div class="layui-input-inline">
+            <input type="password" id="newPass"  required  lay-verify="required" placeholder="请输入新密码"  class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" ></div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">再输入:</label>
+        <div class="layui-input-inline">
+            <input type="password" id="newPass2"  required  lay-verify="required" placeholder="请再次输入新密码"  class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" ></div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn"  id="yes">确定修改</button>
+        </div>
+    </div>
 
 </script>
+
+<script>
+	layui.use(['element','layer'],function(){
+		var element = layui.element;
+		var layer = layui.layer;
+
+
+		$("#updatePass").click(function ()
+        {
+	        var dia=layer.open({
+		        type: 1,
+		        content: $('#msg').html(),
+		        area: ['400px','300px'],
+		        title: '修改密码',
+		        success:function ()
+		        {
+
+		        }
+	        });
+            $('#yes').click(function ()
+            {
+	            var oldPass=$('#oldPass').val();
+	            var newPass=$('#newPass').val();
+	            var newPass2=$('#newPass2').val();
+                var mpass=document.getElementById("mpassword").innerText;
+                if(!(oldPass.trim()===mpass))
+                {
+	                layer.alert("原密码有误", {icon: 5});
+                }
+	            else if(!(newPass.trim().length>=5 && newPass.trim().length<=8))
+                {
+	                layer.alert("请输入5-8位的新密码", {icon: 5});
+                }
+	            else if(!(newPass.trim()===newPass2.trim()))
+                {
+	                layer.alert("两次新密码输入不一致", {icon: 5});
+                }
+	            else if(oldPass===newPass)
+                {
+	                layer.alert("原密码和新密码不得一致", {icon: 5});
+                }
+	            else
+                {
+	                $.ajax({
+		                type: "POST",
+		                url: "/pass/updateAdminPassword",
+		                dataType: "text",
+		                data: {pass: newPass},
+		                success: function (msg) {
+			                if (msg === "yes") {
+				                layer.alert("修改成功", {icon: 1});
+                                layer.close(dia);
+			                } else {
+				                layer.alert("修改失败，请重试", {icon: 5});
+			                }
+		                },
+		                error: function () {
+			                layer.alert("服务器正忙.....", {icon: 5});
+		                }
+	                });
+                }
+            });
+		});
+	});
+
+</script>
+
 </body>
 </html>
