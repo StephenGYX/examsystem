@@ -46,27 +46,37 @@ public class StudentExamServiceImpl implements StudentExamService
 		{
 			if (exam!=null)
 			{
-				session.setAttribute("exam",exam);
-				SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd hh:mm");
-				String dostarttime=sd.format(new Date());
-				session.setAttribute("dostarttime",dostarttime);
-				list=studentExamDao.examQuestion(Integer.valueOf(exam.getEid()+""));
-				if (list.size()>0)
+				List<Integer> cla=studentExamDao.verifyT(student.getSclass());
+				if (cla.contains(exam.getTid()))
 				{
-					list.get(0).setCorrect(exam.getEduration());
+					session.setAttribute("exam",exam);
+					SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd hh:mm");
+					String dostarttime=sd.format(new Date());
+					session.setAttribute("dostarttime",dostarttime);
+					list=studentExamDao.examQuestion(Integer.valueOf(exam.getEid()+""));
+					if (list.size()>0)
+					{
+						list.get(0).setCorrect(exam.getEduration());
+					}else
+					{
+						Question q=new Question();
+						q.setQtime("notquestion");
+						list.add(q);
+					}
 				}else
 				{
 					Question q=new Question();
-					q.setQtime("notquestion");
+					q.setQtime("notteacher");
 					list.add(q);
 				}
+
 			}else
 			{
 				Question q=new Question();
 				exam=studentExamDao.examCode2(examnum);
 				if (exam==null)
 				{
-					q.setQtime("notquestion");
+					q.setQtime("notquestion1");
 				}
 				else
 				{

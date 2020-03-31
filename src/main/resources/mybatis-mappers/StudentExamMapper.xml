@@ -10,7 +10,7 @@
     </select>
 
     <select id="examQuestion" parameterType="java.lang.Integer" resultType="com.example.examsystem.bean.Question">
-        select * from question where qid in(select qid from examquestion where eid=#{eid})
+        select * from question where qid in(select qid from examquestion where eid=#{eid}) order by qtype
     </select>
 
     <select id="reviewExam" parameterType="java.lang.String" resultType="int">
@@ -35,4 +35,8 @@
     <update id="changePass" parameterType="java.lang.String">
         update student set spassword=#{spass} where saccount=#{saccount}
     </update>
+
+    <select id="verifyT" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select tid from teacherclass where cid in (select cid from class where cname=#{sclass})
+    </select>
 </mapper>

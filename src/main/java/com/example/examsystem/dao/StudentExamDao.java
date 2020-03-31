@@ -28,4 +28,6 @@ public interface StudentExamDao
 	public Question getType(@Param("qid")String qid);
 	//修改密码
 	public int changePass(@Param("saccount")String saccount,@Param("spass")String spass);
+	//判断出卷考试是否为交给学生的老师
+	public List<Integer> verifyT(@Param("sclass")String sclass);
 }
