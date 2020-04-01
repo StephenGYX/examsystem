@@ -46,11 +46,9 @@ public class StudentExamServiceImpl implements StudentExamService
 		{
 			if (exam!=null)
 			{
-				System.out.println("1111111111111111111111");
 				List<Integer> cla=studentExamDao.verifyT(student.getSclass());
 				if (cla.contains(exam.getTid()))
 				{
-					System.out.println("22222222");
 					session.setAttribute("exam",exam);
 					SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd hh:mm");
 					String dostarttime=sd.format(new Date());
@@ -82,7 +80,16 @@ public class StudentExamServiceImpl implements StudentExamService
 				}
 				else
 				{
-					q.setQtime("error");
+					List<Integer> cla=studentExamDao.verifyT(student.getSclass());
+					if (cla.contains(exam.getTid()))
+					{
+						q.setQtime("notT");
+					}
+					else
+					{
+						q.setQtime("error");
+					}
+
 				}
 
 				list.add(q);
@@ -168,16 +175,23 @@ public class StudentExamServiceImpl implements StudentExamService
 		Student student=(Student)session.getAttribute("student");
 		if (!student.getSpassword().equals(newPass))
 		{
-			int index=studentExamDao.changePass(student.getSaccount(),newPass);
-			if (index>0)
+			if (!student.getSpassword().equals(pass))
 			{
-				res="success";
-				student.setSpassword(newPass);
-				session.setAttribute("student",student);
+				int index=studentExamDao.changePass(student.getSaccount(),newPass);
+				if (index>0)
+				{
+					res="success";
+					student.setSpassword(newPass);
+					session.setAttribute("student",student);
+				}else
+				{
+					res="error";
+				}
 			}else
 			{
-				res="error";
+				res="notpass";
 			}
+
 		}
 		return res;
 	}

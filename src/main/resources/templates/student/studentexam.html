@@ -206,7 +206,7 @@
 							layer.msg('考试码错误，请联系任课老师', {icon: 5});
 						} else if (res[0].qtime === 'notquestion1') {
 							layer.msg('考试码不存在', {icon: 5});
-						} else if (res[0].qtime === 'notteacher') {
+						} else if (res[0].qtime === 'notteacher'||res[0].qtime === 'notT') {
 							layer.msg('该考试码出卷老师不是你的任课老师', {icon: 5});
 						} else if (res.length > 0) {
 							dotime(res[0].correct);
