@@ -204,6 +204,8 @@
 							layer.msg('你已做完该考试码的考卷，请待老师批改后再查看成绩', {icon: 6});
 						} else if (res[0].qtime === 'notquestion') {
 							layer.msg('考试码错误，请联系任课老师', {icon: 5});
+						} else if (res[0].qtime === 'notquestion1') {
+							layer.msg('考试码不存在', {icon: 5});
 						} else if (res[0].qtime === 'notteacher') {
 							layer.msg('该考试码出卷老师不是你的任课老师', {icon: 5});
 						} else if (res.length > 0) {

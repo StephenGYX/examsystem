@@ -46,9 +46,11 @@ public class StudentExamServiceImpl implements StudentExamService
 		{
 			if (exam!=null)
 			{
+				System.out.println("1111111111111111111111");
 				List<Integer> cla=studentExamDao.verifyT(student.getSclass());
 				if (cla.contains(exam.getTid()))
 				{
+					System.out.println("22222222");
 					session.setAttribute("exam",exam);
 					SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd hh:mm");
 					String dostarttime=sd.format(new Date());

@@ -117,6 +117,12 @@ public class StudentExamController
 		return "index";
 	}
 
+	/**
+	 * 进行获取考试题目
+	 * @param examnum
+	 * @param session
+	 * @return
+	 */
 	@PostMapping("/examnum")
 	@ResponseBody
 	public List<Question> examQuestion(String examnum,HttpSession session){
