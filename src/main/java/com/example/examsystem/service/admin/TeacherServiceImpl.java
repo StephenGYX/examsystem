@@ -33,6 +33,9 @@ public class TeacherServiceImpl implements TeacherService{
                 for (int i = 0; i < teacher.getTsubject().length; i++) {
                    teacherDao.addTeacherSubject(teacher1.getTid(),teacher.getTsubject()[i]);
                 }
+                for (int i = 0; i < teacher.getTclass().length; i++) {
+                    teacherDao.addTclass(teacher1.getTid(),teacher.getTclass()[i]);
+                }
                 result = "true";
             }
         }else {
@@ -58,7 +61,7 @@ public class TeacherServiceImpl implements TeacherService{
             System.out.println("222");
             result = "have";
         }else {
-            if (teacherDao.delSubject(teacher.getTid()) > 0 && teacherDao.delTeacher(teacher.getTid()) > 0){
+            if (teacherDao.delSubject(teacher.getTid()) > 0 && teacherDao.delTeacher(teacher.getTid()) > 0 && teacherDao.delClass(teacher.getTid()) > 0){
              result = "true";
             }
         }

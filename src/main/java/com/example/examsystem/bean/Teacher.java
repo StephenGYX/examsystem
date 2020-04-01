@@ -16,5 +16,5 @@ public class Teacher implements Serializable {
     private String teducation;
     private String tregtime;
     private String[] tsubject;
-
+    private String[] tclass;
 }

@@ -65,12 +65,15 @@
         <div class="layui-form-item">
             <label class="layui-form-label" style="width: 100px">教学课程：</label>
             <div class="layui-input-inline" id="addbox">
-                <!--                <input type="checkbox" name="java" title="java">-->
-                <!--                <input type="checkbox" name="C++" title="C++">-->
-
             </div>
         </div>
-
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">教学班级：</label>
+            <div class="layui-input-inline">
+                <div class="layui-input-inline" id="addclass">
+                </div>
+            </div>
+        </div>
         <div class="layui-form-item">
             <label class="layui-form-label" style="width: 100px">出生日期：</label>
             <div class="layui-input-inline">
@@ -162,12 +165,19 @@
                 url: "/admin/getSubject",
                 type: "POST",
                 data: {},
-                dataType: 'json',
+                dataType: 'text',
                 success: function (result) {
+                    var list = result.split("://");
+                    var sub = JSON.parse(list[0]);
+                    var cla = JSON.parse(list[1]);
+                    for (var i = 0; i < sub.length; i++) {
 
-                    for (var i = 0; i < result.length; i++) {
+                        $('#addbox').append('<input type="checkbox"  name="tsubject" value="' + sub[i].sid + '" title="' + sub[i].sname + '">');
 
-                        $('#addbox').append('<input type="checkbox"  name="tsubject" value="' + result[i].sid + '" title="' + result[i].sname + '">');
+                    }
+                    for (var i = 0; i < cla.length; i++) {
+
+                        $('#addclass').append('<input type="checkbox"  name="tclass" value="' + cla[i].cid + '" title="' + cla[i].cname + '">');
 
                     }
                     form.render();
@@ -194,6 +204,21 @@
                 }
 
                 data.field.tsubject = json;
+
+
+                //获取checkbox数据
+                var quotation1 = new Array();
+                $("input:checkbox[name='tclass']:checked").each(function () {
+                    quotation1.push($(this).val());
+                });
+                var json1 = {};
+                for (var i = 0; i < quotation1.length; i++) {
+                    json1[i] = quotation1[i];
+                }
+
+                data.field.tclass = json1;
+
+
                 var day1 = new Date(data.field.tbirth);
                 var day2 = new Date();
                 if ((day2 - day1) / (1000 * 60 * 60 * 24 * 365) < 20 || (day2 - day1) / (1000 * 60 * 60 * 24 * 365) > 60) {
@@ -206,6 +231,8 @@
                     layer.alert('姓名只能2~4位');
                 } else if (quotation.length < 1){
                     layer.alert('请选择教学课程');
+                } else if (quotation1.length < 1){
+                    layer.alert('请选择教学班级');
                 } else {
                     data.field.tregtime = new Date().format("yyyy-MM-dd");
 
@@ -217,7 +244,7 @@
                         success: function (result) {
                             if (result === 'true') {
                                 layer.alert('新增成功');
-                                layer.close('');
+                                layer.closeAll();
                                 table.reload('teacher');
                             } else if (result === 'false') {
                                 layer.alert('新增失败');
