@@ -1,5 +1,6 @@
 package com.example.examsystem.service.admin;
 
+import com.example.examsystem.bean.ClassInfo;
 import com.example.examsystem.bean.Subject;
 import com.example.examsystem.dao.SubDao;
 import com.google.gson.Gson;
@@ -17,7 +18,8 @@ public class SubServiceImpl implements SubService {
     @Override
     public String getSubject() {
         List<Subject> list = subDao.getSubject();
-
-        return new Gson().toJson(list);
+        List<ClassInfo> list1 = subDao.getClassInfo();
+        String s = new Gson().toJson(list)+"://"+new Gson().toJson(list1);
+        return s;
     }
 }

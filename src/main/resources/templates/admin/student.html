@@ -12,9 +12,9 @@
 <body>
 
 
-<a style="margin-top: 5%;margin-left: 5%" class="layui-btn" id="add">新增学生</a>
+<a style="margin-top: 5%;margin-left: 5%;" class="layui-btn" id="add">新增学生</a>
 <table id="student" lay-filter="student"></table>
-<script type="text/html" id="barDemo">
+<script  type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script type="text/html" id="addStudent">
@@ -182,6 +182,8 @@
                     layer.alert('密码只能6~8位');
                 } else if (data.field.sname.length > 4 || data.field.sname.length < 2) {
                     layer.alert('姓名只能2~4位');
+                } else if (data.field.sclass.length < 1){
+                    layer.alert('必须要选择班级');
                 } else {
                     data.field.sregtime = new Date().format("yyyy-MM-dd");
 

@@ -19,6 +19,10 @@ public interface TeacherDao {
     @Insert("insert into teachersubject(tid,sid) values(#{tid},#{s})")
     int addTeacherSubject(String tid, String s);
 
+
+    @Insert("insert into teacherclass(tid,cid) values(#{tid},#{s})")
+    int addTclass(String tid, String s);
+
     @Select("select count(*) from teacher")
     int countTeacher();
 
@@ -33,4 +37,7 @@ public interface TeacherDao {
 
     @Delete("delete from teachersubject where tid = #{tid}")
     int delSubject(String tid);
+
+    @Delete("delete from teacherclass where tid = #{tid}")
+    int delClass(String tid);
 }
