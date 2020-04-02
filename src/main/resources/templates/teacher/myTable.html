@@ -61,10 +61,11 @@
 			, url: "/pass/getList"
 			, cols: [
 				[
-					{field: 'taccount', title: '账号', width: '25%'}
-					, {field: 'tsex', title: '性别', width: '25%'}
-					, {field: 'teducation', title: '学历', width: '25%'}
-					, {field: 'tbirth', title: '生日', width: '25%'}
+					{field: 'taccount', title: '账号', width: '20%'}
+					,{field: 'tname', title: '姓名', width: '20%'}
+					, {field: 'tsex', title: '性别', width: '20%'}
+					, {field: 'teducation', title: '学历', width: '20%'}
+					, {field: 'tbirth', title: '生日', width: '20%'}
 				]
 			]
 		});
@@ -118,7 +119,7 @@
 							}
 						},
 						error: function () {
-							layer.alert("服务器正忙.....", {icon: 5});
+							layer.alert("服务器正忙.....", {icon: 3});
 						}
 					});
 				}

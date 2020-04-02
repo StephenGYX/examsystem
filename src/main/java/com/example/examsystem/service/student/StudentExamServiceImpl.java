@@ -21,7 +21,7 @@ import java.util.*;
 public class StudentExamServiceImpl implements StudentExamService
 {
 
-	@Autowired
+	@Autowired(required = false)
 	private StudentExamDao studentExamDao;
 	/**
 	 * 查看试卷
@@ -47,7 +47,7 @@ public class StudentExamServiceImpl implements StudentExamService
 			if (exam!=null)
 			{
 				List<Integer> cla=studentExamDao.verifyT(student.getSclass());
-				if (cla.contains(exam.getTid()))
+				if (cla.contains(Integer.valueOf(exam.getTid()+"")))
 				{
 					session.setAttribute("exam",exam);
 					SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -129,7 +129,7 @@ public class StudentExamServiceImpl implements StudentExamService
 			SimpleDateFormat ed=new SimpleDateFormat("yyyy-MM-dd hh:mm");
 			String doendtime=ed.format(new Date());
 			String dostarttime=(String)request.getSession().getAttribute("dostarttime");
-			index=studentExamDao.overexam(student.getSid(),exam.getEid()+"",dostarttime,doendtime);
+			index=studentExamDao.overexam(exam.getEid()+"",student.getSid(),dostarttime,doendtime);
 			if (index>0)
 			{
 				res="success";
@@ -175,23 +175,18 @@ public class StudentExamServiceImpl implements StudentExamService
 		Student student=(Student)session.getAttribute("student");
 		if (!student.getSpassword().equals(newPass))
 		{
-			if (!student.getSpassword().equals(pass))
+			res="notpass";
+			if (student.getSpassword().equals(pass))
 			{
+				res="error";
 				int index=studentExamDao.changePass(student.getSaccount(),newPass);
 				if (index>0)
 				{
 					res="success";
 					student.setSpassword(newPass);
 					session.setAttribute("student",student);
-				}else
-				{
-					res="error";
 				}
-			}else
-			{
-				res="notpass";
 			}
-
 		}
 		return res;
 	}
