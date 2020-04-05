@@ -8,6 +8,10 @@ import com.example.examsystem.bean.Teacher;
 import com.example.examsystem.bean.TeacherStuentExam;
 import com.example.examsystem.dto.TopicDto;
 import com.example.examsystem.service.teacher.TopicService;
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
@@ -20,10 +24,12 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Controller
 @RequestMapping("/topic")
@@ -500,5 +506,58 @@ public class TopicController
 	{
 		System.out.println(score);
 		return topicService.addScore(eid, sid, score);
+	}
+
+	@GetMapping("/outScore")
+	@ResponseBody
+	public String outScore(String tid)
+	{
+		String msg = "error";
+		File desktopDir = FileSystemView.getFileSystemView().getHomeDirectory();
+		String desktopPath = desktopDir.getAbsolutePath();
+		Results<TeacherStuentExam> data = topicService.examList(0, 10000, tid);
+		if (data.getDatas().size() > 0)
+		{
+			String[] title = {"试卷名", "姓名", "科目", "成绩"};
+			File file = new File(desktopPath + "/score" + tid + ".xls");
+			System.out.println(file.getAbsolutePath());
+			try
+			{
+				file.createNewFile();
+				WritableWorkbook workbook = Workbook.createWorkbook(file);
+				WritableSheet sheet = workbook.createSheet("sheet1", 0);
+				Label label = null;
+				for (int i = 0; i < title.length; i++)
+				{
+					label = new Label(i, 0, title[i]);
+					sheet.addCell(label);
+				}
+				for (int i = 1; i < data.getDatas().size() + 1; i++)
+				{
+
+					label = new Label(0, i, data.getDatas().get(i - 1).getEname());
+					sheet.addCell(label);
+					label = new Label(1, i, data.getDatas().get(i - 1).getStName());
+					sheet.addCell(label);
+					label = new Label(2, i, data.getDatas().get(i - 1).getSname());
+					sheet.addCell(label);
+					if (data.getDatas().get(i - 1).getScore() != null)
+					{
+						label = new Label(3, i, data.getDatas().get(i - 1).getScore());
+					} else
+					{
+						label = new Label(3, i, "无成绩");
+					}
+					sheet.addCell(label);
+				}
+				workbook.write();
+				workbook.close();
+				msg = "success";
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return msg;
 	}
 }

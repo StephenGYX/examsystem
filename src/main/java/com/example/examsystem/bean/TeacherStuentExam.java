@@ -9,6 +9,7 @@ public class TeacherStuentExam
 	private Integer sid;
 	private Integer studentId;
 	private Integer seid;
+	private String stName;
 	private String sname;
 	private String ename;
 	private String ecode;

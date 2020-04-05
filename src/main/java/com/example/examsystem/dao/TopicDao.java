@@ -74,7 +74,7 @@ public interface TopicDao
 	@Select("select count(*) from (select s.seid,s.eid,s.sid studentId,s.starttime,s.endtime,s.score,e.tid,e.sid,e.ecode from studentexam s left join exam e on e.eid=s.eid where e.tid=#{tid}) se,subject su where se.sid=su.sid")
 	Long countAllExamList(String tid);
 
-	@Select("select se.*,su.sname from (select s.seid,s.eid,s.sid studentId,s.starttime,s.endtime,s.score,e.tid,e.sid,e.ecode,e.ename from studentexam s left join exam e on e.eid=s.eid where e.tid=#{tid}) se,subject su where se.sid=su.sid order by se.starttime limit #{startPosition},#{limit}")
+	@Select("select se.*,su.sname,st.sname stName from (select s.seid,s.eid,s.sid studentId,s.starttime,s.endtime,s.score,e.tid,e.sid,e.ecode,e.ename from studentexam s left join exam e on e.eid=s.eid where e.tid=#{tid}) se,subject su,student st where se.sid=su.sid and st.sid=se.studentId order by se.starttime limit #{startPosition},#{limit}")
 	List<TeacherStuentExam> getAllExamListByPage(Integer startPosition, Integer limit, String tid);
 
 	@Select("select q.title,aa.* from (select a.aid aid ,a.eid eid,a.qid qid,a.sid studentId,a.answer answer,a.correct correct,a.qtype qtype from answer a where a.eid=#{eid} and a.sid=#{studentId}) aa,question q where aa.qid=q.qid")

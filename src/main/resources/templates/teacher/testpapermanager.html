@@ -11,6 +11,12 @@
 </head>
 <body>
 <input type="hidden" id="teacher" th:value="${session.teacher.getTid()}">
+
+<div class="layui-inline layui-show-xs-block">
+    <button type="button" class="layui-btn layui-btn-fluid" lay-event="dowload"
+            onclick="outScore()">导出成绩
+    </button>
+</div>
 <div class="layui-card-body ">
     <table class="layui-hide" id="topic" lay-filter="topic"></table>
 </div>
@@ -24,6 +30,26 @@
 </div>
 </body>
 <script>
+
+	function outScore() {
+		var value = $('#teacher').val();
+		$.ajax({
+			type: "get",
+			url: "/topic/outScore?tid=" + value,
+			data: {
+
+			},
+			success: function (msg) {
+				if (msg == "success") {
+					alert("导出成功");
+				} else {
+					alert("导出失败");
+				}
+			}
+		})
+	}
+
+
 	var aoodd;
 	layui.use('table', function () {
 		var teacher = $('#teacher').val();
@@ -44,6 +70,7 @@
 					{title: '序号', type: 'numbers'}
 					, {field: 'ename', title: '试卷名称', align: 'center'}
 					, {field: 'ecode', title: '考试码', align: 'center'}
+					, {field: 'stName', title: '学生姓名', align: 'center'}
 					, {field: 'sname', title: '科目', align: 'center'}
 					, {field: 'score', title: '成绩', align: 'center'}
 					, {field: 'starttime', title: '做题开始时间', align: 'center'}
