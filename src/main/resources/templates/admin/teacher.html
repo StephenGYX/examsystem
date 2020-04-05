@@ -47,7 +47,7 @@
             <h3>规则5：学历有：博士，硕士，本科，大专</h3>
             <h3>规则6：生日只能1960年~2000年之间，例如：1980-02-05</h3>
             <h3>规则7：班级填写相对应的id，多个班级用中文"，"隔开，例如：1，2</h3>
-            <h3>科目有：<span style="color: red" id="cla"></span></h3>
+            <h3>班级有：<span style="color: red" id="cla"></span></h3>
             <h3>规则8：学科填写相对应的id，多个科目用中文"，"隔开，例如：1，2</h3>
             <h3>科目有：<span style="color: red" id="sub"></span></h3>
             <!--            <div th:each="subject:${session.list}">-->
@@ -136,7 +136,10 @@
             , upload = layui.upload,
             table = layui.table;
         //指定允许上传的文件类型
+
+
         upload.render({
+
             elem: '#test3'
             ,
             url: '/admin/bulkInsertTeacher' //改成您自己的上传接口
@@ -147,11 +150,20 @@
             ,
             exts: 'xls' //限制后缀名
             ,
+	        before: function(obj){
+		        layer.msg('批量导入中...',
+                    {
+			        icon: 16,
+			        shade: 0.01,
+			        time: 0
+		        })
+	        },
             done: function (res) {
                 layer.alert(res.msg);
                 table.reload('teacher');
             }
         });
+
     });
 </script>
 <script>
@@ -346,13 +358,13 @@
                 var s = '';
                 var c = '';
                 for (var i = 0; i < cla.length; i++) {
-                    c += sub[i].sid + '=' + sub[i].sname + ',';
+                    c += cla[i].cid + '=' + cla[i].cname + ',';
                 }
-                $('#sub').html(c);
+                $('#cla').html(c);
                 for (var i = 0; i < sub.length; i++) {
-                    s += cla[i].cid + '=' + cla[i].cname + ',';
+                    s += sub[i].sid + '=' + sub[i].sname + ',';
                 }
-                $('#cla').html(s);
+                $('#sub').html(s);
                 form.render();
             }
         });

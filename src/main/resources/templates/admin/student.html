@@ -123,6 +123,14 @@
             ,
             exts: 'xls' //限制后缀名
             ,
+	        before: function(obj){
+		        layer.msg('批量导入中...',
+			        {
+				        icon: 16,
+				        shade: 0.01,
+				        time: 0
+			        })
+	        },
             done: function (res) {
                 layer.alert(res.msg);
                 table.reload('student');
