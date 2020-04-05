@@ -11,11 +11,43 @@
 </head>
 <body>
 
+<div style="margin-top: 5%;margin-left: 5%;">
+    <a class="layui-btn layui-show-xs-block" id="add">新增学生</a>
+    <div class="layui-inline layui-show-xs-block">
+        <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>批量新增学生
+        </button>
+    </div>
 
-<a style="margin-top: 5%;margin-left: 5%;" class="layui-btn" id="add">新增学生</a>
+    <div class="layui-inline layui-show-xs-block">
+        <button type="button" class="layui-btn layui-btn-fluid" onclick="addMention()">学生模板导入提示
+        </button>
+    </div>
+
+    <div class="layui-inline layui-show-xs-block">
+        <button type="button" class="layui-btn layui-btn-fluid" lay-event="dowload"
+                onclick="download()">获取学生导入模板
+        </button>
+    </div>
+</div>
 <table id="student" lay-filter="student"></table>
-<script  type="text/html" id="barDemo">
+<script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="rule2Frame">
+    <div style="padding:50px;font-size: 15px">
+        <div>
+            <h1>学生模板导入注意-Warning</h1>
+            <h3>请先下载预先设定好的模板，然后按格式导入模板，切勿随机修改模板，将会导致导入失败或导入错误的模板导致数据出现问题！</h3>
+            <h3>规则1：账号只能6位，例如：100001   <span style="color: red">注意账号不可重复</span></h3>
+            <h3>规则2：密码只能6~8位，例如：123456</h3>
+            <h3>规则3：姓名只能2~4位，例如：张三</h3>
+            <h3>规则4：性别只能男或女</h3>
+            <h3>规则5：班级填写相对应的名称，例如：高一1班</h3>
+            <h3>班级有：<span style="color: red" id="cla"></span></h3>
+            <h3>规则6：生日填写 例如：1980-02-05</h3>
+
+        </div>
+    </div>
 </script>
 <script type="text/html" id="addStudent">
     <form class="layui-form">
@@ -74,7 +106,30 @@
         </div>
     </form>
 </script>
-
+<script>
+    layui.use(['upload', 'table'], function () {
+        var $ = layui.jquery
+            , upload = layui.upload,
+            table = layui.table;
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#test3'
+            ,
+            url: '/admin/bulkInsertStudent' //改成您自己的上传接口
+            ,
+            accept: 'file' //普通文件
+            ,
+            acceptMime: '.xls'//文件窗口默认显示 xlsx|xls|xlsm 的文件
+            ,
+            exts: 'xls' //限制后缀名
+            ,
+            done: function (res) {
+                layer.alert(res.msg);
+                table.reload('student');
+            }
+        });
+    });
+</script>
 <script>
     layui.use(['table', 'form', 'jquery', 'laydate'], function () {
         var table = layui.table,
@@ -124,7 +179,7 @@
                                 table.reload('student');
                             } else if (result === 'have') {
                                 layer.alert('该学生有做试卷不可删除');
-                            }else {
+                            } else {
                                 layer.alert('删除失败');
                             }
                         }
@@ -171,7 +226,6 @@
             form.on('submit(add)', function (data) {
 
 
-
                 var day1 = new Date(data.field.sbirth);
                 var day2 = new Date();
                 if ((day2 - day1) / (1000 * 60 * 60 * 24 * 365) < 1 || (day2 - day1) / (1000 * 60 * 60 * 24 * 365) > 150) {
@@ -182,7 +236,7 @@
                     layer.alert('密码只能6~8位');
                 } else if (data.field.sname.length > 4 || data.field.sname.length < 2) {
                     layer.alert('姓名只能2~4位');
-                } else if (data.field.sclass.length < 1){
+                } else if (data.field.sclass.length < 1) {
                     layer.alert('必须要选择班级');
                 } else {
                     data.field.sregtime = new Date().format("yyyy-MM-dd");
@@ -215,6 +269,38 @@
 
     });
 
+
+
+    function addMention() {
+        //动态获取班级
+        $.ajax({
+            url: "/admin/getClass",
+            type: "POST",
+            data: {},
+            dataType: 'json',
+            success: function (result) {
+                var s = '';
+                for (var i = 0; i < result.length; i++) {
+                        s += result[i].cname + ',';
+
+                }
+                $('#cla').html(s);
+                form.render();
+            }
+        });
+        opAdd = layer.open({
+            type: 1 //Page层类型
+            , area: ['600px', '500px']
+            , title: '新增学生窗口'
+            , shade: 0.3 //遮罩透明度
+            , anim: 1 //0-6的动画形式，-1不开启
+            , content: $("#rule2Frame").html()
+        });
+    }
+
+    function download() {
+        window.location.href = "/admin/downloadStudent";
+    }
 
     /**
      *对Date的扩展，将 Date 转化为指定格式的String

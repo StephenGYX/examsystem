@@ -11,11 +11,53 @@
 </head>
 <body>
 
+<div style="margin-left: 5%;margin-top: 5%">
+    <div class="layui-inline layui-show-xs-block">
+        <a class="layui-btn" id="add">新增教师</a>
+    </div>
+    <div class="layui-inline layui-show-xs-block">
+        <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>批量新增教师
+        </button>
+    </div>
 
-<a style="margin-top: 5%;margin-left: 5%" class="layui-btn" id="add">新增教师</a>
+    <div class="layui-inline layui-show-xs-block">
+        <button type="button" class="layui-btn layui-btn-fluid" onclick="addMention()">教师模板导入提示
+        </button>
+    </div>
+
+    <div class="layui-inline layui-show-xs-block">
+        <button type="button" class="layui-btn layui-btn-fluid" lay-event="dowload"
+                onclick="download()">获取教师导入模板
+        </button>
+    </div>
+</div>
 <table id="teacher" lay-filter="teacher"></table>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="rule2Frame">
+    <div style="padding:50px;font-size: 15px">
+        <div>
+            <h1>教师模板导入注意-Warning</h1>
+            <h3>请先下载预先设定好的模板，然后按格式导入模板，切勿随机修改模板，将会导致导入失败或导入错误的模板导致数据出现问题！</h3>
+            <h3>规则1：账号只能6位，例如：100001   <span style="color: red">注意账号不可重复</span></h3>
+            <h3>规则2：密码只能6~8位，例如：123456</h3>
+            <h3>规则3：姓名只能2~4位，例如：张三</h3>
+            <h3>规则4：性别只能男或女</h3>
+            <h3>规则5：学历有：博士，硕士，本科，大专</h3>
+            <h3>规则6：生日只能1960年~2000年之间，例如：1980-02-05</h3>
+            <h3>规则7：班级填写相对应的id，多个班级用中文"，"隔开，例如：1，2</h3>
+            <h3>科目有：<span style="color: red" id="cla"></span></h3>
+            <h3>规则8：学科填写相对应的id，多个科目用中文"，"隔开，例如：1，2</h3>
+            <h3>科目有：<span style="color: red" id="sub"></span></h3>
+            <!--            <div th:each="subject:${session.list}">-->
+            <!--                <div style="color: red">-->
+            <!--                    <span>sid对应科目:</span><span th:text="${subject.getSid()}"></span><span>=</span><span-->
+            <!--                        th:text="${subject.getSname()}"></span><br>-->
+            <!--                </div>-->
+            <!--            </div>-->
+        </div>
+    </div>
 </script>
 <script type="text/html" id="addTeacher">
     <form class="layui-form">
@@ -88,7 +130,30 @@
         </div>
     </form>
 </script>
-
+<script>
+    layui.use(['upload', 'table'], function () {
+        var $ = layui.jquery
+            , upload = layui.upload,
+            table = layui.table;
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#test3'
+            ,
+            url: '/admin/bulkInsertTeacher' //改成您自己的上传接口
+            ,
+            accept: 'file' //普通文件
+            ,
+            acceptMime: '.xls'//文件窗口默认显示 xlsx|xls|xlsm 的文件
+            ,
+            exts: 'xls' //限制后缀名
+            ,
+            done: function (res) {
+                layer.alert(res.msg);
+                table.reload('teacher');
+            }
+        });
+    });
+</script>
 <script>
     layui.use(['table', 'form', 'jquery', 'laydate'], function () {
         var table = layui.table,
@@ -138,7 +203,7 @@
                                 table.reload('teacher');
                             } else if (result === 'have') {
                                 layer.alert('该老师有出试卷不可删除');
-                            }else {
+                            } else {
                                 layer.alert('删除失败');
                             }
                         }
@@ -170,11 +235,12 @@
                     var list = result.split("://");
                     var sub = JSON.parse(list[0]);
                     var cla = JSON.parse(list[1]);
+                    var s;
                     for (var i = 0; i < sub.length; i++) {
 
                         $('#addbox').append('<input type="checkbox"  name="tsubject" value="' + sub[i].sid + '" title="' + sub[i].sname + '">');
-
                     }
+
                     for (var i = 0; i < cla.length; i++) {
 
                         $('#addclass').append('<input type="checkbox"  name="tclass" value="' + cla[i].cid + '" title="' + cla[i].cname + '">');
@@ -229,9 +295,9 @@
                     layer.alert('密码只能6~8位');
                 } else if (data.field.tname.length > 4 || data.field.tname.length < 2) {
                     layer.alert('姓名只能2~4位');
-                } else if (quotation.length < 1){
+                } else if (quotation.length < 1) {
                     layer.alert('请选择教学课程');
-                } else if (quotation1.length < 1){
+                } else if (quotation1.length < 1) {
                     layer.alert('请选择教学班级');
                 } else {
                     data.field.tregtime = new Date().format("yyyy-MM-dd");
@@ -262,8 +328,47 @@
 
         });
 
+
     });
 
+
+    function addMention() {
+        //动态获取课程
+        $.ajax({
+            url: "/admin/getSubject",
+            type: "POST",
+            data: {},
+            dataType: 'text',
+            success: function (result) {
+                var list = result.split("://");
+                var sub = JSON.parse(list[0]);
+                var cla = JSON.parse(list[1]);
+                var s = '';
+                var c = '';
+                for (var i = 0; i < cla.length; i++) {
+                    c += sub[i].sid + '=' + sub[i].sname + ',';
+                }
+                $('#sub').html(c);
+                for (var i = 0; i < sub.length; i++) {
+                    s += cla[i].cid + '=' + cla[i].cname + ',';
+                }
+                $('#cla').html(s);
+                form.render();
+            }
+        });
+        opAdd = layer.open({
+            type: 1 //Page层类型
+            , area: ['600px', '600px']
+            , title: '新增教师窗口'
+            , shade: 0.3 //遮罩透明度
+            , anim: 1 //0-6的动画形式，-1不开启
+            , content: $("#rule2Frame").html()
+        });
+    }
+
+    function download() {
+        window.location.href = "/admin/downloadTeacher";
+    }
 
     /**
      *对Date的扩展，将 Date 转化为指定格式的String
